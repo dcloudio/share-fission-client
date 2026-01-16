@@ -58,6 +58,7 @@ export default {
 		toEvaluate: "去评分",
 		readArticles: "阅读过的文章",
 		myScore: "我的积分",
+		withdraw: "积分提现",
 		invite: "分销推荐",
 		myTeam: "我的团队",
 		feedback: "问题与反馈",
