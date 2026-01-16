@@ -13,7 +13,7 @@
   "maxTokenLength": 10, 
   "passwordErrorLimit": 6, 
   "passwordErrorRetryTime": 3600, 
-  "autoSetInviteCode": false,
+  "autoSetInviteCode": true,
   "forceInviteCode": false,
   "idCardCertifyLimit": 1, 
   "realNameCertifyLimit": 5, 
