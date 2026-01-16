@@ -1,6 +1,6 @@
 {
 	"bsonType": "object",
-	"required": ["user_id", "score", "balance"],
+	"required": ["user_id", "score", "balance", "source"],
 	"permission": {
 		"read": "doc.user_id == auth.uid",
 		"create": false,
@@ -27,6 +27,26 @@
 		"balance": {
 			"bsonType": "int",
 			"description": "变化后的积分余额"
+		},
+		"source": {
+			"bsonType": "string",
+			"description": "来源：ad_watch/sign_in/team_reward/exchange/withdraw/withdraw_fee_return/admin_adjust"
+		},
+		"source_user_id": {
+			"bsonType": "string",
+			"description": "来源用户ID（团队奖励时，记录是谁的下线贡献的）"
+		},
+		"relation_level": {
+			"bsonType": "int",
+			"description": "关系层级（团队奖励时）：1=一级下线，2=二级下线"
+		},
+		"order_id": {
+			"bsonType": "string",
+			"description": "关联订单ID（兑换商品时）"
+		},
+		"withdrawal_id": {
+			"bsonType": "string",
+			"description": "关联提现记录ID（提现时）"
 		},
 		"comment": {
 			"bsonType": "string",

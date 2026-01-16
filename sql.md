@@ -42,7 +42,7 @@
 | type | int | 积分类型：1=收入，2=支出 |
 | balance | int | 变化后的积分余额 |
 | comment | String | 备注说明 |
-| create_time | Timestamp | 创建时间（自动填充） |
+| create_date | Timestamp | 创建时间（自动填充） |
 
 ### 需要新增的字段
 
@@ -260,8 +260,8 @@
 
 ```javascript
 // uni-id-scores（新增字段索引）
-db["uni-id-scores"].createIndex({ user_id: 1, create_time: -1 })
-db["uni-id-scores"].createIndex({ user_id: 1, source: 1, create_time: -1 })
+db["uni-id-scores"].createIndex({ user_id: 1, create_date: -1 })
+db["uni-id-scores"].createIndex({ user_id: 1, source: 1, create_date: -1 })
 
 // sf_withdrawal_logs
 db.sf_withdrawal_logs.createIndex({ user_id: 1, create_time: -1 })
