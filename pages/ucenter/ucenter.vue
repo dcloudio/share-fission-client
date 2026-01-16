@@ -112,6 +112,11 @@
 							"title": this.$t('mine.invite'),
 							"to": '/pages/ucenter/distribution-invite/distribution-invite',
 							"icon": "redo"
+						},
+						{
+							"title": this.$t('mine.myTeam'),
+							"to": '/pages/ucenter/my-team/my-team',
+							"icon": "person"
 						}
 					],
 					[{

@@ -59,6 +59,7 @@ export default {
 		readArticles: "阅读过的文章",
 		myScore: "我的积分",
 		invite: "分销推荐",
+		myTeam: "我的团队",
 		feedback: "问题与反馈",
 		settings: "设置",
 		checkUpdate: "检查更新",
