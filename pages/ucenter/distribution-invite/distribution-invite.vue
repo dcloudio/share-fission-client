@@ -1,5 +1,5 @@
 <template>
-	<view class="distribution-center">
+	<view class="distribution-invite">
 		<view class="header">
 			<text class="title">分销推荐</text>
 			<text class="subtitle">邀请好友，共享收益</text>
@@ -203,7 +203,7 @@ view {
 }
 /* #endif */
 
-.distribution-center {
+.distribution-invite {
 	min-height: 100vh;
 	background: linear-gradient(180deg, #f5f7fa 0%, #ffffff 100%);
 	padding-bottom: 40rpx;

@@ -67,9 +67,28 @@
 			}
 		},
 		{
-			"path": "pages/ucenter/distribution-center/distribution-center",
+			"path": "pages/ucenter/distribution-invite/distribution-invite",
 			"style": {
-				"navigationBarTitleText": "分销中心"
+				"navigationBarTitleText": "分销推荐"
+			}
+		},
+		{
+			"path": "pages/ucenter/my-team/my-team",
+			"style": {
+				"navigationBarTitleText": "我的团队",
+				"enablePullDownRefresh": false
+			}
+		},
+		{
+			"path": "pages/ucenter/withdraw/withdraw",
+			"style": {
+				"navigationBarTitleText": "积分提现"
+			}
+		},
+		{
+			"path": "pages/ucenter/withdraw-record/withdraw-record",
+			"style": {
+				"navigationBarTitleText": "提现记录"
 			}
 		}
 		// #ifdef APP

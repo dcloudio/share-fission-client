@@ -1,0 +1,633 @@
+<template>
+	<view class="my-team">
+		<!-- 收益统计 -->
+		<view class="stats-container">
+			<view class="stats-header">
+				<text class="stats-title">我的收益</text>
+			</view>
+
+			<!-- 时间筛选 -->
+			<view class="time-filter">
+				<view
+					v-for="(item, index) in timeFilters"
+					:key="index"
+					class="filter-item"
+					:class="{ active: currentTimeFilter === item.value }"
+					@click="changeTimeFilter(item.value)"
+				>
+					<text class="filter-text">{{ item.label }}</text>
+				</view>
+			</view>
+
+			<!-- 收益数据卡片 -->
+			<view class="stats-cards">
+				<view class="stat-card">
+					<text class="stat-label">积分收益</text>
+					<text class="stat-value">{{ statsData.points }}</text>
+				</view>
+				<view class="stat-card">
+					<text class="stat-label">一级下线</text>
+					<text class="stat-value highlight">{{ statsData.level1Count }}</text>
+				</view>
+				<view class="stat-card">
+					<text class="stat-label">二级下线</text>
+					<text class="stat-value highlight">{{ statsData.level2Count }}</text>
+				</view>
+			</view>
+		</view>
+
+		<!-- 团队成员 -->
+		<view class="team-container">
+			<view class="team-header">
+				<text class="team-title">团队成员</text>
+				<text class="team-count">共 {{ totalCount }} 人</text>
+			</view>
+
+			<!-- 层级切换 -->
+			<view class="level-tabs">
+				<view
+					v-for="(tab, index) in levelTabs"
+					:key="index"
+					class="tab-item"
+					:class="{ active: currentLevel === tab.value }"
+					@click="changeLevel(tab.value)"
+				>
+					<text class="tab-text">{{ tab.label }}</text>
+					<text class="tab-count">{{ tab.value === 1 ? level1Total : level2Total }}</text>
+				</view>
+			</view>
+
+			<!-- 成员列表 -->
+			<view class="member-list">
+				<view v-if="teamList.length === 0 && !loading" class="empty-state">
+					<uni-icons type="person" size="60" color="#cccccc"></uni-icons>
+					<text class="empty-text">暂无团队成员</text>
+				</view>
+
+				<view
+					v-for="(member, index) in teamList"
+					:key="member.uid"
+					class="member-item"
+				>
+					<view class="member-info">
+						<cloud-image
+							v-if="member.avatarFile && member.avatarFile.url"
+							class="member-avatar"
+							:src="member.avatarFile.url"
+							width="80rpx"
+							height="80rpx"
+						></cloud-image>
+						<view v-else class="member-avatar default-avatar">
+							<uni-icons type="person-filled" size="20" color="#999999"></uni-icons>
+						</view>
+
+						<view class="member-details">
+							<text class="member-name">{{ member.nickname || member.username || '用户' + member.uid.slice(-6) }}</text>
+							<text class="member-time">{{ formatTime(member.inviteTime) }}</text>
+						</view>
+					</view>
+
+					<view class="member-tag">
+						<text class="tag-text">{{ currentLevel === 1 ? '一级' : '二级' }}</text>
+					</view>
+				</view>
+
+				<!-- 加载更多 -->
+				<view v-if="teamList.length > 0" class="load-more">
+					<uni-load-more :status="loadMoreStatus"></uni-load-more>
+				</view>
+			</view>
+		</view>
+	</view>
+</template>
+
+<script>
+const db = uniCloud.database();
+
+export default {
+	data() {
+		return {
+			// 时间筛选
+			timeFilters: [
+				{ label: '今日', value: 'today' },
+				{ label: '昨日', value: 'yesterday' },
+				{ label: '近7天', value: 'week' },
+				{ label: '全部', value: 'all' }
+			],
+			currentTimeFilter: 'all',
+
+			// 层级切换
+			levelTabs: [
+				{ label: '一级用户', value: 1 },
+				{ label: '二级用户', value: 2 }
+			],
+			currentLevel: 1,
+
+			// 收益数据（虚拟数据）
+			statsData: {
+				points: 0,
+				level1Count: 0,
+				level2Count: 0
+			},
+
+			// 团队列表
+			teamList: [],
+			level1Total: 0,
+			level2Total: 0,
+			totalCount: 0,
+
+			// 分页
+			limit: 20,
+			offset: 0,
+
+			// 加载状态
+			loading: false,
+			loadMoreStatus: 'more'
+		}
+	},
+	onLoad() {
+		this.loadTeamData()
+		this.loadStatsData()
+	},
+	onReachBottom() {
+		if (this.loadMoreStatus === 'more') {
+			this.loadMore()
+		}
+	},
+	methods: {
+		/**
+		 * 加载团队数据
+		 */
+		async loadTeamData() {
+			if (this.loading) return
+
+			this.loading = true
+			this.loadMoreStatus = 'loading'
+
+			try {
+				// 使用现有的云函数获取受邀用户
+				const res = await uniCloud.callFunction({
+					name: 'uni-id-co',
+					data: {
+						action: 'getInvitedUser',
+						params: {
+							level: this.currentLevel,
+							limit: this.limit,
+							offset: this.offset,
+							needTotal: true
+						}
+					}
+				})
+
+				if (res.result.errCode === 0) {
+					const newList = res.result.invitedUser || []
+
+					if (this.offset === 0) {
+						this.teamList = newList
+					} else {
+						this.teamList = [...this.teamList, ...newList]
+					}
+
+					// 更新总数
+					if (this.currentLevel === 1) {
+						this.level1Total = res.result.total || 0
+					} else {
+						this.level2Total = res.result.total || 0
+					}
+					this.totalCount = this.level1Total + this.level2Total
+
+					// 更新加载状态
+					if (newList.length < this.limit) {
+						this.loadMoreStatus = 'noMore'
+					} else {
+						this.loadMoreStatus = 'more'
+					}
+				} else {
+					uni.showToast({
+						title: res.result.errMsg || '加载失败',
+						icon: 'none'
+					})
+					this.loadMoreStatus = 'noMore'
+				}
+			} catch (error) {
+				console.error('加载团队数据失败:', error)
+				uni.showToast({
+					title: '加载失败',
+					icon: 'none'
+				})
+				this.loadMoreStatus = 'noMore'
+			} finally {
+				this.loading = false
+			}
+		},
+
+		/**
+		 * 加载收益数据（虚拟数据）
+		 */
+		async loadStatsData() {
+			try {
+				// 获取一级和二级用户总数
+				const level1Res = await uniCloud.callFunction({
+					name: 'uni-id-co',
+					data: {
+						action: 'getInvitedUser',
+						params: {
+							level: 1,
+							limit: 1,
+							offset: 0,
+							needTotal: true
+						}
+					}
+				})
+
+				const level2Res = await uniCloud.callFunction({
+					name: 'uni-id-co',
+					data: {
+						action: 'getInvitedUser',
+						params: {
+							level: 2,
+							limit: 1,
+							offset: 0,
+							needTotal: true
+						}
+					}
+				})
+
+				let level1Total = 0
+				let level2Total = 0
+
+				if (level1Res.result.errCode === 0) {
+					level1Total = level1Res.result.total || 0
+					this.level1Total = level1Total
+				}
+
+				if (level2Res.result.errCode === 0) {
+					level2Total = level2Res.result.total || 0
+					this.level2Total = level2Total
+				}
+
+				this.totalCount = level1Total + level2Total
+
+				// 虚拟收益数据（基于时间筛选）
+				this.calculateStats(level1Total, level2Total)
+			} catch (error) {
+				console.error('加载收益数据失败:', error)
+			}
+		},
+
+		/**
+		 * 计算虚拟收益数据
+		 */
+		calculateStats(level1Total, level2Total) {
+			// 根据时间筛选计算虚拟数据
+			let ratio = 1
+			switch (this.currentTimeFilter) {
+				case 'today':
+					ratio = 0.05 // 假设今日新增占总数的5%
+					break
+				case 'yesterday':
+					ratio = 0.08
+					break
+				case 'week':
+					ratio = 0.3
+					break
+				case 'all':
+					ratio = 1
+					break
+			}
+
+			this.statsData = {
+				// 虚拟积分：一级用户贡献10积分，二级用户贡献5积分
+				points: Math.floor((level1Total * 10 + level2Total * 5) * ratio),
+				level1Count: Math.floor(level1Total * ratio),
+				level2Count: Math.floor(level2Total * ratio)
+			}
+		},
+
+		/**
+		 * 切换时间筛选
+		 */
+		changeTimeFilter(value) {
+			this.currentTimeFilter = value
+			this.calculateStats(this.level1Total, this.level2Total)
+		},
+
+		/**
+		 * 切换层级
+		 */
+		changeLevel(level) {
+			if (this.currentLevel === level) return
+
+			this.currentLevel = level
+			this.offset = 0
+			this.teamList = []
+			this.loadMoreStatus = 'more'
+			this.loadTeamData()
+		},
+
+		/**
+		 * 加载更多
+		 */
+		loadMore() {
+			this.offset += this.limit
+			this.loadTeamData()
+		},
+
+		/**
+		 * 格式化时间
+		 */
+		formatTime(timestamp) {
+			if (!timestamp) return ''
+
+			const date = new Date(timestamp)
+			const now = new Date()
+			const diff = now - date
+
+			// 小于1分钟
+			if (diff < 60000) {
+				return '刚刚'
+			}
+			// 小于1小时
+			if (diff < 3600000) {
+				return Math.floor(diff / 60000) + '分钟前'
+			}
+			// 小于1天
+			if (diff < 86400000) {
+				return Math.floor(diff / 3600000) + '小时前'
+			}
+			// 小于7天
+			if (diff < 604800000) {
+				return Math.floor(diff / 86400000) + '天前'
+			}
+
+			// 超过7天显示具体日期
+			const year = date.getFullYear()
+			const month = String(date.getMonth() + 1).padStart(2, '0')
+			const day = String(date.getDate()).padStart(2, '0')
+
+			if (year === now.getFullYear()) {
+				return `${month}-${day}`
+			}
+			return `${year}-${month}-${day}`
+		}
+	}
+}
+</script>
+
+<style lang="scss" scoped>
+/* #ifndef APP-NVUE */
+view {
+	display: flex;
+	box-sizing: border-box;
+	flex-direction: column;
+}
+/* #endif */
+
+.my-team {
+	min-height: 100vh;
+	background: #f5f5f5;
+	padding-bottom: 40rpx;
+}
+
+/* 收益统计 */
+.stats-container {
+	background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+	padding: 40rpx 30rpx 30rpx;
+	margin-bottom: 20rpx;
+}
+
+.stats-header {
+	margin-bottom: 30rpx;
+}
+
+.stats-title {
+	font-size: 36rpx;
+	font-weight: bold;
+	color: #FFFFFF;
+}
+
+.time-filter {
+	flex-direction: row;
+	justify-content: space-around;
+	margin-bottom: 30rpx;
+	background: rgba(255, 255, 255, 0.15);
+	border-radius: 40rpx;
+	padding: 8rpx;
+}
+
+.filter-item {
+	flex: 1;
+	height: 60rpx;
+	align-items: center;
+	justify-content: center;
+	border-radius: 32rpx;
+	transition: all 0.3s;
+}
+
+.filter-item.active {
+	background: #FFFFFF;
+}
+
+.filter-text {
+	font-size: 28rpx;
+	color: rgba(255, 255, 255, 0.8);
+}
+
+.filter-item.active .filter-text {
+	color: #667eea;
+	font-weight: 600;
+}
+
+.stats-cards {
+	flex-direction: row;
+	justify-content: space-between;
+}
+
+.stat-card {
+	flex: 1;
+	background: rgba(255, 255, 255, 0.2);
+	border-radius: 16rpx;
+	padding: 30rpx 20rpx;
+	margin: 0 8rpx;
+	align-items: center;
+}
+
+.stat-card:first-child {
+	margin-left: 0;
+}
+
+.stat-card:last-child {
+	margin-right: 0;
+}
+
+.stat-label {
+	font-size: 24rpx;
+	color: rgba(255, 255, 255, 0.9);
+	margin-bottom: 12rpx;
+}
+
+.stat-value {
+	font-size: 40rpx;
+	font-weight: bold;
+	color: #FFFFFF;
+}
+
+.stat-value.highlight {
+	color: #FFD700;
+}
+
+/* 团队成员 */
+.team-container {
+	background: #FFFFFF;
+	border-radius: 20rpx 20rpx 0 0;
+	margin: 0 20rpx;
+	padding: 30rpx;
+}
+
+.team-header {
+	flex-direction: row;
+	justify-content: space-between;
+	align-items: center;
+	margin-bottom: 30rpx;
+	padding-bottom: 20rpx;
+	border-bottom: 1px solid #f0f0f0;
+}
+
+.team-title {
+	font-size: 32rpx;
+	font-weight: bold;
+	color: #333333;
+}
+
+.team-count {
+	font-size: 28rpx;
+	color: #999999;
+}
+
+.level-tabs {
+	flex-direction: row;
+	margin-bottom: 30rpx;
+	background: #f8f8f8;
+	border-radius: 12rpx;
+	padding: 6rpx;
+}
+
+.tab-item {
+	flex: 1;
+	height: 70rpx;
+	flex-direction: row;
+	align-items: center;
+	justify-content: center;
+	border-radius: 8rpx;
+}
+
+.tab-item.active {
+	background: #FFFFFF;
+	box-shadow: 0 2rpx 8rpx rgba(0, 0, 0, 0.08);
+}
+
+.tab-text {
+	font-size: 28rpx;
+	color: #666666;
+	margin-right: 8rpx;
+}
+
+.tab-item.active .tab-text {
+	color: #333333;
+	font-weight: 600;
+}
+
+.tab-count {
+	font-size: 24rpx;
+	color: #999999;
+	background: #f0f0f0;
+	padding: 4rpx 12rpx;
+	border-radius: 20rpx;
+}
+
+.tab-item.active .tab-count {
+	color: #667eea;
+	background: rgba(102, 126, 234, 0.1);
+}
+
+/* 成员列表 */
+.member-list {
+	min-height: 400rpx;
+}
+
+.empty-state {
+	align-items: center;
+	justify-content: center;
+	padding: 100rpx 0;
+}
+
+.empty-text {
+	font-size: 28rpx;
+	color: #999999;
+	margin-top: 20rpx;
+}
+
+.member-item {
+	flex-direction: row;
+	justify-content: space-between;
+	align-items: center;
+	padding: 24rpx 0;
+	border-bottom: 1px solid #f5f5f5;
+}
+
+.member-item:last-child {
+	border-bottom: none;
+}
+
+.member-info {
+	flex: 1;
+	flex-direction: row;
+	align-items: center;
+}
+
+.member-avatar {
+	width: 80rpx;
+	height: 80rpx;
+	border-radius: 50%;
+	margin-right: 20rpx;
+	overflow: hidden;
+}
+
+.default-avatar {
+	background: #f0f0f0;
+	align-items: center;
+	justify-content: center;
+}
+
+.member-details {
+	flex: 1;
+}
+
+.member-name {
+	font-size: 30rpx;
+	color: #333333;
+	font-weight: 500;
+	margin-bottom: 8rpx;
+}
+
+.member-time {
+	font-size: 24rpx;
+	color: #999999;
+}
+
+.member-tag {
+	background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+	padding: 8rpx 20rpx;
+	border-radius: 20rpx;
+}
+
+.tag-text {
+	font-size: 24rpx;
+	color: #FFFFFF;
+}
+
+.load-more {
+	padding: 20rpx 0;
+	align-items: center;
+}
+</style>

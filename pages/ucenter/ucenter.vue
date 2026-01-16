@@ -109,9 +109,19 @@
 							"icon": "paperplane"
 						},
 						{
+							"title": this.$t('mine.withdraw'),
+							"to": '/pages/ucenter/withdraw/withdraw',
+							"icon": "wallet"
+						},
+						{
 							"title": this.$t('mine.invite'),
-							"to": '/pages/ucenter/distribution-center/distribution-center',
+							"to": '/pages/ucenter/distribution-invite/distribution-invite',
 							"icon": "redo"
+						},
+						{
+							"title": this.$t('mine.myTeam'),
+							"to": '/pages/ucenter/my-team/my-team',
+							"icon": "person"
 						}
 					],
 					[{
