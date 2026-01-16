@@ -65,6 +65,12 @@
 				"navigationBarTitleText": "阅读记录",
 				"enablePullDownRefresh": true
 			}
+		},
+		{
+			"path": "pages/ucenter/distribution-center/distribution-center",
+			"style": {
+				"navigationBarTitleText": "分销中心"
+			}
 		}
 		// #ifdef APP
 		, {

@@ -84,8 +84,7 @@
 				if (res && res.length == 0) {
 					let {
 						_id: userId
-					} = uni.getStorageSync('userInfo')
-					console.log(userId, uni.getStorageSync('userInfo'));
+					} = uni.getStorageSync('uni-id-pages-userInfo')
 					if (!userId) {
 						return uni.navigateTo({
 							url: "/pages/ucenter/login-page/index/index"

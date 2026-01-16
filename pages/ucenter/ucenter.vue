@@ -107,14 +107,12 @@
 							"to": '',
 							"event": 'getScore',
 							"icon": "paperplane"
-						}
-						// #ifdef APP
-						, {
+						},
+						{
 							"title": this.$t('mine.invite'),
-							"event": 'share',
+							"to": '/pages/ucenter/distribution-center/distribution-center',
 							"icon": "redo"
 						}
-						// #endif
 					],
 					[{
 						"title": this.$t('mine.feedback'),
