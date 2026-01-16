@@ -110,7 +110,7 @@
 						},
 						{
 							"title": this.$t('mine.invite'),
-							"to": '/pages/ucenter/distribution-center/distribution-center',
+							"to": '/pages/ucenter/distribution-invite/distribution-invite',
 							"icon": "redo"
 						}
 					],

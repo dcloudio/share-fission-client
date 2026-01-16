@@ -67,9 +67,9 @@
 			}
 		},
 		{
-			"path": "pages/ucenter/distribution-center/distribution-center",
+			"path": "pages/ucenter/distribution-invite/distribution-invite",
 			"style": {
-				"navigationBarTitleText": "分销中心"
+				"navigationBarTitleText": "分销推荐"
 			}
 		}
 		// #ifdef APP
