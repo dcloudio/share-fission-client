@@ -90,6 +90,24 @@
 			"style": {
 				"navigationBarTitleText": "提现记录"
 			}
+		},
+		{
+			"path": "pages/ucenter/points-mall/points-mall",
+			"style": {
+				"navigationBarTitleText": "积分商城"
+			}
+		},
+		{
+			"path": "pages/ucenter/product-detail/product-detail",
+			"style": {
+				"navigationBarTitleText": "商品详情"
+			}
+		},
+		{
+			"path": "pages/ucenter/exchange-order/exchange-order",
+			"style": {
+				"navigationBarTitleText": "兑换记录"
+			}
 		}
 		// #ifdef APP
 		, {
@@ -279,6 +297,11 @@
 			"iconPath": "static/tabbar/grid.png",
 			"selectedIconPath": "static/tabbar/grid_active.png",
 			"text": "宫格"
+		}, {
+			"pagePath": "pages/ucenter/points-mall/points-mall",
+			"iconPath": "static/tabbar/mall.png",
+			"selectedIconPath": "static/tabbar/mall_active.png",
+			"text": "商城"
 		}, {
 			"pagePath": "pages/ucenter/ucenter",
 			"iconPath": "static/tabbar/me.png",
