@@ -6,8 +6,8 @@
     }
   ], 
   "passwordStrength": "medium", 
-  "tokenSecret": "", 
-  "requestAuthSecret": "", 
+  "tokenSecret": "sdjhsahjkajk2356893qtwkjhjksa", 
+  "requestAuthSecret": "sghguy5663ewtyuroikksklsajlk", 
   "tokenExpiresIn": 7200, 
   "tokenExpiresThreshold": 3600,
   "maxTokenLength": 10, 
