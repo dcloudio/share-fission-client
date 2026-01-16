@@ -48,6 +48,7 @@
 
 | 字段名 | 类型 | 必填 | 索引 | 说明 |
 |--------|------|------|------|------|
+| source | String | 是 | 是 | 来源：ad_watch/sign_in/team_reward/exchange/withdraw/withdraw_fee_return/admin_adjust |
 | source_user_id | String | 否 | 是 | 来源用户ID（团队奖励时，记录是谁的下线贡献的） |
 | relation_level | int | 否 | - | 关系层级（团队奖励时）：1=一级下线，2=二级下线 |
 | order_id | String | 否 | 是 | 关联订单ID（兑换商品时） |
@@ -113,7 +114,7 @@
 | 字段名 | 类型 | 必填 | 索引 | 说明 |
 |--------|------|------|------|------|
 | _id | String | 是 | 主键 | 卡密ID |
-| product_id | String | 是 | 是 | 关联商品ID |
+| goods_id | String | 是 | 是 | 关联商品ID |
 | card_no | String | 是 | - | 卡号 |
 | card_pwd | String | 否 | - | 卡密 |
 | exchange_url | String | 否 | - | 兑换地址 |
@@ -191,14 +192,14 @@
 
 ## 10. 资金池表 (sf_fund_pool)
 
-> 用于计算积分兑换汇率
+> 用于计算积分兑换汇率，单条记录，`_id` 固定为 `"main"`
 
 | 字段名 | 类型 | 必填 | 说明 |
 |--------|------|------|------|
 | _id | String | 是 | 固定值："main" |
 | total_cash | Number | 是 | 资金池总现金（元） |
-| total_points | int | 是 | 资金池总积分（分） |
-| exchange_rate | Number | 是 | 当前汇率（元/分） |
+| total_score | int | 是 | 资金池总积分 |
+| exchange_rate | Number | 是 | 当前汇率（元/积分） |
 | update_time | Timestamp | 是 | 更新时间 |
 
 ---
@@ -233,10 +234,10 @@
 | score_withdrawn | int | 是 | - | 提现积分 |
 | new_users | int | 是 | - | 新增用户数 |
 | active_users | int | 是 | - | 活跃用户数（当日登录） |
+| total_cash | Number | 是 | - | 当日资金池总现金（元） |
+| total_score | int | 是 | - | 当日资金池总积分 |
+| exchange_rate | Number | 是 | - | 当日汇率（元/积分） |
 | update_time | Timestamp | 是 | - | 更新时间 |
-| total_cash | Number | 是 | 资金池总现金（元） |
-| total_points | int | 是 | 资金池总积分（分） |
-| exchange_rate | Number | 是 | 当前汇率（元/分） |
 
 ---
 
@@ -252,3 +253,38 @@
 | withdraw | 提现消耗 |
 | withdraw_fee_return | 提现手续费回流 |
 | admin_adjust | 管理员调整 |
+
+---
+
+## 索引建议
+
+```javascript
+// uni-id-scores（新增字段索引）
+db["uni-id-scores"].createIndex({ user_id: 1, create_time: -1 })
+db["uni-id-scores"].createIndex({ user_id: 1, source: 1, create_time: -1 })
+
+// sf_withdrawal_logs
+db.sf_withdrawal_logs.createIndex({ user_id: 1, create_time: -1 })
+db.sf_withdrawal_logs.createIndex({ status: 1, create_time: -1 })
+
+// sf_goods
+db.sf_goods.createIndex({ status: 1, is_deleted: 1, sort_order: -1 })
+db.sf_goods.createIndex({ category: 1, status: 1, is_deleted: 1 })
+
+// sf_card_keys
+db.sf_card_keys.createIndex({ goods_id: 1, status: 1 })
+
+// sf_orders
+db.sf_orders.createIndex({ user_id: 1, create_time: -1 })
+db.sf_orders.createIndex({ status: 1, create_time: -1 })
+
+// opendb-sign-in
+db["opendb-sign-in"].createIndex({ user_id: 1, date: 1 }, { unique: true })
+
+// sf_ad_watch_logs
+db.sf_ad_watch_logs.createIndex({ user_id: 1, watch_time: -1 })
+db.sf_ad_watch_logs.createIndex({ user_id: 1, create_time: -1 })
+
+// sf_fund_pool_logs
+db.sf_fund_pool_logs.createIndex({ type: 1, create_time: -1 })
+```
