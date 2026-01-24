@@ -56,7 +56,7 @@
 
 ---
 
-## 3. 提现记录表 (sf_withdrawal_logs)
+## 3. 提现记录表 (sf-withdrawal-logs)
 
 | 字段名 | 类型 | 必填 | 索引 | 说明 |
 |--------|------|------|------|------|
@@ -89,7 +89,7 @@
 
 ---
 
-## 4. 商品表 (sf_goods)
+## 4. 商品表 (sf-goods)
 
 | 字段名 | 类型 | 必填 | 索引 | 说明 |
 |--------|------|------|------|------|
@@ -109,7 +109,7 @@
 
 ---
 
-## 5. 卡密表 (sf_card_keys)
+## 5. 卡密表 (sf-card-keys)
 
 | 字段名 | 类型 | 必填 | 索引 | 说明 |
 |--------|------|------|------|------|
@@ -125,7 +125,7 @@
 
 ---
 
-## 6. 订单表 (sf_orders)
+## 6. 订单表 (sf-orders)
 
 | 字段名 | 类型 | 必填 | 索引 | 说明 |
 |--------|------|------|------|------|
@@ -154,7 +154,7 @@
 
 ---
 
-## 8. 广告观看记录表 (sf_ad_watch_logs)
+## 8. 广告观看记录表 (sf-ad-watch-logs)
 
 | 字段名 | 类型 | 必填 | 索引 | 说明 |
 |--------|------|------|------|------|
@@ -170,7 +170,7 @@
 
 ---
 
-## 9. 系统配置表 (sf_system_config)
+## 9. 系统配置表 (sf-system-config)
 
 > 单条记录存储所有配置，`_id` 固定为 `"main"`
 
@@ -190,7 +190,7 @@
 
 ---
 
-## 10. 资金池表 (sf_fund_pool)
+## 10. 资金池表 (sf-fund-pool)
 
 > 用于计算积分兑换汇率，单条记录，`_id` 固定为 `"main"`
 
@@ -204,7 +204,7 @@
 
 ---
 
-## 11. 资金池流水表 (sf_fund_pool_logs)
+## 11. 资金池流水表 (sf-fund-pool-logs)
 
 | 字段名 | 类型 | 必填 | 索引 | 说明 |
 |--------|------|------|------|------|
@@ -221,7 +221,7 @@
 
 ---
 
-## 12. 数据统计表 (sf_daily_statistics)
+## 12. 数据统计表 (sf-daily-statistics)
 
 > 按日聚合统计数据
 
@@ -263,28 +263,28 @@
 db["uni-id-scores"].createIndex({ user_id: 1, create_date: -1 })
 db["uni-id-scores"].createIndex({ user_id: 1, source: 1, create_date: -1 })
 
-// sf_withdrawal_logs
-db.sf_withdrawal_logs.createIndex({ user_id: 1, create_time: -1 })
-db.sf_withdrawal_logs.createIndex({ status: 1, create_time: -1 })
+// sf-withdrawal-logs
+db.sf-withdrawal-logs.createIndex({ user_id: 1, create_time: -1 })
+db.sf-withdrawal-logs.createIndex({ status: 1, create_time: -1 })
 
-// sf_goods
-db.sf_goods.createIndex({ status: 1, is_deleted: 1, sort_order: -1 })
-db.sf_goods.createIndex({ category: 1, status: 1, is_deleted: 1 })
+// sf-goods
+db.sf-goods.createIndex({ status: 1, is_deleted: 1, sort_order: -1 })
+db.sf-goods.createIndex({ category: 1, status: 1, is_deleted: 1 })
 
-// sf_card_keys
-db.sf_card_keys.createIndex({ goods_id: 1, status: 1 })
+// sf-card-keys
+db.sf-card-keys.createIndex({ goods_id: 1, status: 1 })
 
-// sf_orders
-db.sf_orders.createIndex({ user_id: 1, create_time: -1 })
-db.sf_orders.createIndex({ status: 1, create_time: -1 })
+// sf-orders
+db.sf-orders.createIndex({ user_id: 1, create_time: -1 })
+db.sf-orders.createIndex({ status: 1, create_time: -1 })
 
 // opendb-sign-in
 db["opendb-sign-in"].createIndex({ user_id: 1, date: 1 }, { unique: true })
 
-// sf_ad_watch_logs
-db.sf_ad_watch_logs.createIndex({ user_id: 1, watch_time: -1 })
-db.sf_ad_watch_logs.createIndex({ user_id: 1, create_time: -1 })
+// sf-ad-watch-logs
+db.sf-ad-watch-logs.createIndex({ user_id: 1, watch_time: -1 })
+db.sf-ad-watch-logs.createIndex({ user_id: 1, create_time: -1 })
 
-// sf_fund_pool_logs
-db.sf_fund_pool_logs.createIndex({ type: 1, create_time: -1 })
+// sf-fund-pool-logs
+db.sf-fund-pool-logs.createIndex({ type: 1, create_time: -1 })
 ```
