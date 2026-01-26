@@ -17,19 +17,19 @@ export default {
     // "douyin",
 
     // #ifdef APP
-    'univerify',
+    // 'univerify',
     // #endif
     // #ifndef MP-HARMONY
-    'weixin',
+    // 'weixin',
     // #endif
     'username',
     // #ifdef APP
-    'apple',
+    // 'apple',
     // #endif
     'smsCode',
     // #ifdef APP-HARMONY || MP-HARMONY
-    'huawei',
-    'huaweiMobile'
+    // 'huawei',
+    // 'huaweiMobile'
     // #endif
   ],
   // 政策协议
@@ -39,7 +39,7 @@ export default {
     huaweiConsumerPrivacyUrl: 'https://privacy.consumer.huawei.com/legal/id/authentication-terms.htm?code=CN&language=zh-CN', // 华为账号用户认证协议
     // 哪些场景下显示，1.注册（包括登录并注册，如：微信登录、苹果登录、短信验证码登录）、2.登录（如：用户名密码登录）
     scope: [
-      'register', 'login', 'realNameVerify'
+      'register'
     ]
   },
   // 提供各类服务接入（如微信登录服务）的应用id

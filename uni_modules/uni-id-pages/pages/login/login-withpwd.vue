@@ -45,8 +45,8 @@
 		mixins: [mixin],
 		data() {
 			return {
-				"password": "",
-				"username": "",
+				"password": "test1test1",
+				"username": "test1",
 				"captcha": "",
 				"needCaptcha": false,
 				"focusUsername": false,
