@@ -20,9 +20,9 @@
 
 | 字段名 | 类型 | 必填 | 默认值 | 说明 |
 |--------|------|------|--------|------|
-| score_balance | int | 是 | 0 | 当前可用积分 |
-| score_total | int | 是 | 0 | 累计获得积分 |
-| score_withdrawn | int | 是 | 0 | 累计已提现积分 |
+| score_balance | int | 是 | 0 | 积分余额 |
+| score_total | int | 是 | 0 | 累计积分 |
+| score_withdrawn | int | 是 | 0 | 已提现积分 |
 
 > 注：不再单独创建分销关系表，上下级关系通过 `inviter_uid` 数组表达
 
