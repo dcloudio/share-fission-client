@@ -79,6 +79,7 @@
 			},
 			//看激励视频广告签到
 			async showRewardedVideoAd() {
+        console.log('showRewardedVideoAd');
 				let res = await this.getSignedInInfo();
 				console.log(res);
 				if (res && res.length == 0) {
@@ -92,7 +93,7 @@
 					}
 					// 调用后会显示 loading 界面
 					AD.show({
-						adpid: 1733738477, // HBuilder 基座测试广告位
+						adpid: 1282424243,
 						adType: "RewardedVideo",
 						urlCallback: {
 							userId,
@@ -146,6 +147,7 @@
 			},
 			//普通点击签到
 			async open() {
+        console.log('open')
 				uni.showLoading({
 					mask: true
 				});

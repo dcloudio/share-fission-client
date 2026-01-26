@@ -1,9 +1,9 @@
 {
     "name" : "share-fission",
-    "appid" : "__UNI__61DF81A",
+    "appid" : "__UNI__2302A5F",
     "description" : "",
-    "versionName" : "1.0.0",
-    "versionCode" : "100",
+    "versionName" : "1.0.1",
+    "versionCode" : 26011101,
     "transformPx" : false,
     "app-plus" : {
         "usingComponents" : true,
@@ -42,6 +42,11 @@
             "sdkConfigs" : {
                 "push" : {
                     "unipush" : null
+                },
+                "ad" : {
+                    "gdt" : {},
+                    "gm" : {},
+                    "ks" : {}
                 }
             }
         }
