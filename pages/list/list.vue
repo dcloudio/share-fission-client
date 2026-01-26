@@ -59,8 +59,9 @@
 				</view>
 
 				<!-- 看不出来？查看答案 -->
-				<view v-if="!showAnswer && !isAnswerCorrect && attemptCount > 0" class="tip-box">
-					<text class="tip-text">已尝试 {{ attemptCount }} 次，看不出来？</text>
+				<view v-if="!showAnswer && !isAnswerCorrect" class="tip-box">
+					<text v-if="attemptCount > 0" class="tip-text">已尝试 {{ attemptCount }} 次，看不出来？</text>
+					<text v-else class="tip-text">想不出来？直接查看答案吧</text>
 					<view class="btn-ad-hint" @click="watchAdForAnswer">
 						<text class="btn-ad-text">观看广告查看答案</text>
 					</view>
@@ -167,40 +168,17 @@
 
 			// 观看广告查看答案
 			watchAdForAnswer() {
-				// TODO: 集成广告SDK
-				// 这里先模拟广告播放
-				uni.showLoading({
-					title: '广告加载中...'
+				AD.showRewardedAd({
+					onSuccess: () => {
+						// 广告播放完成，显示答案
+						this.showAnswer = true;
+						uni.showToast({
+							title: '感谢观看！',
+							icon: 'success'
+						});
+					},
+					cancelMessage: '请完整观看广告才能查看答案'
 				})
-
-				setTimeout(() => {
-					uni.hideLoading()
-
-					// 模拟广告播放
-					uni.showModal({
-						title: '广告',
-						content: '这里将展示广告内容（待集成广告SDK）',
-						showCancel: true,
-						cancelText: '跳过',
-						confirmText: '完成观看',
-						success: (res) => {
-							if (res.confirm) {
-								// 用户完整观看广告，显示答案
-								this.showAnswer = true
-								uni.showToast({
-									title: '感谢观看！',
-									icon: 'success'
-								})
-							} else {
-								// 用户跳过广告
-								uni.showToast({
-									title: '请完整观看广告',
-									icon: 'none'
-								})
-							}
-						}
-					})
-				}, 1000)
 			},
 
 			// 重置当前题目状态

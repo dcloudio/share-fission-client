@@ -12,7 +12,7 @@ export default function() {
 				name: 'uni-upgrade-center',
 				data,
 				success: (e) => {
-					console.log("e: ", e);
+					// console.log("e: ", e);
 					resolve(e)
 				},
 				fail: (error) => {

@@ -45,7 +45,7 @@
 	const db = uniCloud.database();
 	const signInTable = db.action('signIn').collection('opendb-sign-in')
 	const date = new Date(new Date().toLocaleDateString()).getTime()
-	import AD from "../../utils/ad.js"
+	import AD from "@/utils/ad.js"
 	export default {
 		name: "uni-signIn",
 		data() {
@@ -79,7 +79,7 @@
 			},
 			//看激励视频广告签到
 			async showRewardedVideoAd() {
-        console.log('showRewardedVideoAd');
+				console.log('showRewardedVideoAd');
 				let res = await this.getSignedInInfo();
 				console.log(res);
 				if (res && res.length == 0) {
@@ -91,28 +91,20 @@
 							url: "/pages/ucenter/login-page/index/index"
 						})
 					}
-					// 调用后会显示 loading 界面
-					AD.show({
-						adpid: 1282424243,
-						adType: "RewardedVideo",
+					console.log('AD.show');
+					// 使用通用广告方法
+					AD.showRewardedAd({
 						urlCallback: {
 							userId,
 							extra: 'uniSignIn'
-						}
-					}, res => {
-						// 用户点击了【关闭广告】按钮
-						if (res && res.isEnded) {
-							// 正常播放结束
-							console.log("onClose " + res.isEnded);
-							//3次轮训查结果
-							// uni.showLoading({mask: true});
+						},
+						onSuccess: async () => {
+							// 广告播放完成，轮询查询签到结果
 							let i = 0;
-							uni.showLoading({
-								mask: true
-							})
-							let myIntive = setInterval(async e => {
+							uni.showLoading({ mask: true });
+							const myIntive = setInterval(async () => {
 								i++;
-								res = await this.getSignedInInfo('签到成功');
+								const res = await this.getSignedInInfo('签到成功');
 								if (i > 2 || res.length) {
 									if (!res.length) {
 										uni.showToast({
@@ -121,27 +113,12 @@
 											duration: 6000
 										});
 									}
-									clearInterval(myIntive)
-									uni.hideLoading()
+									clearInterval(myIntive);
+									uni.hideLoading();
 								}
 							}, 2000);
-						} else {
-							// 播放中途退出
-							console.log("onClose " + res.isEnded);
-							uni.showToast({
-								title: '播放中途退出,签到失败！',
-								icon: 'error',
-								duration: 5000
-							});
-						}
-						// 在此处理服务器回调逻辑
-					}, (err) => {
-						// 广告加载错误
-						console.log(err)
-						uni.showToast({
-							title: err.errMsg,
-							icon: 'none'
-						});
+						},
+						cancelMessage: '播放中途退出,签到失败！'
 					})
 				}
 			},
