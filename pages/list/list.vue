@@ -95,6 +95,7 @@
 <script>
 	import statusBar from "@/uni_modules/uni-nav-bar/components/uni-nav-bar/uni-status-bar";
 	import riddleData from "@/data/riddles.js";
+	import AD from "@/utils/ad.js";
 
 	export default {
 		components: {
