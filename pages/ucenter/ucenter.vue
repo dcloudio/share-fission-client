@@ -3,11 +3,11 @@
 		<uni-sign-in ref="signIn"></uni-sign-in>
 		<view class="userInfo" @click.capture="toUserInfo">
 			<cloud-image width="150rpx" height="150rpx" v-if="hasLogin&&userInfo.avatar_file&&userInfo.avatar_file.url" :src="userInfo.avatar_file.url"></cloud-image>
-			
+
 			<view v-else class="defaultAvatarUrl">
 				<uni-icons color="#ffffff" size="50" type="person-filled" />
 			</view>
-			
+
 			<view class="logo-title">
 				<text class="uer-name" v-if="hasLogin">{{userInfo.nickname||userInfo.username||userInfo.mobile}}</text>
 				<text class="uer-name" v-else>{{$t('mine.notLogged')}}</text>
@@ -85,11 +85,6 @@
 							"icon": "compose"
 						},
 						// #endif
-						{
-							"title": this.$t('mine.signIn'),
-							"event": 'signIn',
-							"icon": "compose"
-						},
 						// #ifdef APP-PLUS
 						{
 							"title": this.$t('mine.toEvaluate'),
@@ -363,7 +358,7 @@
 		background-color: #f8f8f8;
 	}
 	/* #endif*/
-	
+
 	.center {
 		flex: 1;
 		flex-direction: column;
