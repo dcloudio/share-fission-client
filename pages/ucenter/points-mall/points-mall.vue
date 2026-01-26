@@ -55,7 +55,7 @@
 		</view>
 
 		<!-- 商品列表 -->
-		<scroll-view class="product-list" scroll-y>
+    <scroll-view class="product-list" scroll-y>
       <view class="scroll-content">
         <view
         	v-for="(product, index) in sortedProducts"
@@ -82,7 +82,7 @@
         	</view>
         </view>
       </view>
-		</scroll-view>
+    </scroll-view>
 
 		<!-- 空状态 -->
 		<view v-if="filteredProducts.length === 0" class="empty-state">
@@ -335,8 +335,10 @@ page {
 
 .points-mall {
 	flex: 1;
+  height: 100%;
 	background: #f5f5f5;
 	overflow: hidden;
+  flex-direction: column;
 
 	/* 顶部积分余额 */
 	.header-balance {
@@ -443,16 +445,13 @@ page {
 				margin-left: 20rpx;
 				padding: 8rpx 16rpx;
 				border-radius: 20rpx;
-
 				.sort-text {
 					font-size: 13px;
 					color: #666666;
 					margin-right: 4rpx;
 				}
-
 				&.active {
 					background: rgba(0, 122, 255, 0.1);
-
 					.sort-text {
 						color: #007AFF;
 						font-weight: 500;
@@ -470,15 +469,13 @@ page {
 		.scroll-content {
 			flex-direction: row;
 			flex-wrap: wrap;
-			justify-content: space-around;
-
 			.product-item {
 				width: 345rpx;
+        margin-left: 20rpx;
 				background: #FFFFFF;
 				border-radius: 16rpx;
 				margin-bottom: 20rpx;
 				overflow: hidden;
-
 				.product-image-wrapper {
 					width: 345rpx;
 					height: 345rpx;
