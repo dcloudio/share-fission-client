@@ -289,13 +289,11 @@ export default {
 </script>
 
 <style lang="scss" scoped>
-/* #ifndef APP-NVUE */
 view {
 	display: flex;
 	box-sizing: border-box;
 	flex-direction: column;
 }
-/* #endif */
 
 .product-detail {
 	min-height: 100vh;
@@ -490,9 +488,7 @@ view {
 	flex-direction: row;
 	align-items: center;
 	box-shadow: 0 -4rpx 20rpx rgba(0, 0, 0, 0.05);
-	/* #ifndef APP-NVUE */
 	padding-bottom: calc(20rpx + env(safe-area-inset-bottom));
-	/* #endif */
 }
 
 .user-points {

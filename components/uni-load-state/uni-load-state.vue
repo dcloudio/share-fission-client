@@ -11,12 +11,7 @@
 			<text class="error" v-else>{{error}}：{{JSON.stringify(state.error)}}</text>
 		</view>
 		<template v-else>
-			<!-- #ifdef APP-NVUE -->
-			<text class="state-text">{{state.loading?'加载中...':(state.hasMore?'上拉加载更多':'没有更多数据了')}}</text>
-			<!-- #endif -->
-			<!-- #ifndef APP-NVUE -->
 			<uni-load-more class="uni-load-more" :status="state.loading?'loading':(state.hasMore?'hasMore':'noMore')"></uni-load-more>
-			<!-- #endif -->
 		</template>
 		
 	</view>

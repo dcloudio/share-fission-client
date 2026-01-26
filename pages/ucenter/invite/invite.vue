@@ -87,14 +87,11 @@
 	}
 </script>
 <style lang="scss">
-	/* #ifndef APP-NVUE */
 	view {
 		display: flex;
 		box-sizing: border-box;
 		flex-direction: column;
 	}
-
-	/* #endif */
 	.about {
 		width: 750rpx;
 		flex-direction: column;

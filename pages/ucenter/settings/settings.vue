@@ -243,7 +243,6 @@
 </script>
 
 <style>
-	/* #ifndef APP-NVUE */
 	page {
 		flex: 1;
 		width: 100%;
@@ -254,13 +253,11 @@
 		border: none;
 		border-radius: 0;
 	}
-	/* #endif */
+
 	.content {
-		/* #ifndef APP-NVUE */
 		display: flex;
 		width: 100%;
 		height: 100vh;
-		/* #endif */
 		flex-direction: column;
 		flex: 1;
 		background-color: #F9F9F9;
@@ -273,11 +270,9 @@
 		margin-top: 10px;
 		width: 750rpx;
 		height: 44px;
-		/* #ifndef APP-NVUE */
 		display: flex;
     width: 100%;
     border: none;
-		/* #endif */
 		border-width: 0;
 		border-radius: 0;
 		background-color: #FFFFFF;
@@ -290,7 +285,7 @@
 	.mt10 {
 		margin-top: 10px;
 	}
-	/* #ifndef APP-NVUE  || VUE3 */
+
 	.content ::v-deep .uni-list {
 		background-color: #F9F9F9;
 	}
@@ -298,6 +293,5 @@
 		height: 50px;
 		margin-bottom: 1px;
 	}
-	/* #endif */
 
 </style>

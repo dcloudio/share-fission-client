@@ -219,13 +219,11 @@
 </script>
 
 <style scoped>
-	/* #ifndef APP-NVUE */
 	view {
 		display: flex;
 		box-sizing: border-box;
 		flex-direction: column;
 	}
-	/* #endif */
 
 	.pages {
 		background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);

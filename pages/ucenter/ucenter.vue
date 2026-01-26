@@ -347,7 +347,6 @@
 </script>
 
 <style lang="scss" scoped>
-	/* #ifndef APP-NVUE */
 	view {
 		display: flex;
 		box-sizing: border-box;
@@ -357,7 +356,6 @@
 	page {
 		background-color: #f8f8f8;
 	}
-	/* #endif*/
 
 	.center {
 		flex: 1;
@@ -424,7 +422,6 @@
 
 
 	/*修改边线粗细示例*/
-	/* #ifndef APP-NVUE */
 	.center-list ::v-deep .uni-list--border:after {
 		-webkit-transform: scaleY(0.2);
 		transform: scaleY(0.2);
@@ -435,8 +432,6 @@
 	.center-list ::v-deep .uni-list--border-bottom {
 		display: none;
 	}
-
-	/* #endif */
 	.item-footer {
 		flex-direction: row;
 		align-items: center;
@@ -451,12 +446,7 @@
 	.item-footer-badge {
 		width: 20rpx;
 		height: 20rpx;
-		/* #ifndef APP-NVUE */
 		border-radius: 50%;
-		/* #endif */
-		/* #ifdef APP-NVUE */
-		border-radius: 10rpx;
-		/* #endif */
 		background-color: #DD524D;
 	}
 </style>

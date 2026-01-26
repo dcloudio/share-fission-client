@@ -159,13 +159,12 @@
 	}
 </script>
 <style lang="scss" scoped>
-	/* #ifndef APP-NVUE */
 	view{
 		display: flex;
 		box-sizing: border-box;
 		flex-direction: column;
 	}
-	/* #endif */
+
 	.about {
 		flex-direction: column;
 		justify-content: center;
@@ -203,9 +202,7 @@
 		margin: 10px 0;
 		width: 100px;
 		height: 100px;
-		/* #ifndef APP-NVUE */
 		display: block;
-		/* #endif */
 	}
 
 	.copyright {

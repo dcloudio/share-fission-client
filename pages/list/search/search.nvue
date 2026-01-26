@@ -326,12 +326,10 @@
 </script>
 
 <style>
-	/* #ifndef APP-NVUE */
 	page {
 		height: 100%;
 		flex: 1;
 	}
-	/* #endif */
 </style>
 
 <style lang="scss" scoped>
@@ -341,9 +339,7 @@
 		background-color: #fff;
 	}
 	.container {
-		/* #ifndef APP-NVUE */
 		height: 100%;
-		/* #endif */
 		flex: 1;
 		background-color: #f7f7f7;
 	}
@@ -355,9 +351,7 @@
 	}
 
 	@mixin uni-flex {
-		/* #ifndef APP-NVUE */
 		display: flex;
-		/* #endif */
 	}
 
 	@mixin words-display {
@@ -377,26 +371,17 @@
 	}
 
 	/* #ifdef APP */
-	/* #ifndef APP-NVUE  || VUE3*/
-	::v-deep
-	/* #endif */
-	.uni-searchbar {
+	::v-deep .uni-searchbar {
 		padding-left: 0;
 	}
 
 	/* #endif */
 
-	/* #ifndef APP-NVUE || VUE3*/
-	::v-deep
-	/* #endif */
-	.uni-searchbar__box {
+	::v-deep .uni-searchbar__box {
 		border-width: 0;
 	}
 
-	/* #ifndef APP-NVUE || VUE3 */
-	::v-deep
-	/* #endif */
-	.uni-input-placeholder {
+	::v-deep .uni-input-placeholder {
 		font-size: 28rpx;
 	}
 
@@ -424,9 +409,7 @@
 	}
 
 	.search-associative {
-		/* #ifndef APP-NVUE */
 		overflow-y: auto;
-		/* #endif */
 		position: absolute;
 		top: $search-bar-height;
 		left: 0;
@@ -482,16 +465,12 @@
 						padding: 10rpx 20rpx;
 						margin: 20rpx 30rpx 0 0;
 						border-radius: 30rpx;
-						/* #ifndef APP-NVUE */
 						box-sizing: border-box;
-						/* #endif */
 						text-align: center;
 					}
 
 					#{&}-info {
-						/* #ifndef APP-NVUE */
 						display: block;
-						/* #endif */
 						flex: 1;
 						text-align: center;
 						font-size: 26rpx;

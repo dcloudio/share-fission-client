@@ -242,13 +242,11 @@ export default {
 </script>
 
 <style lang="scss" scoped>
-/* #ifndef APP-NVUE */
 view {
 	display: flex;
 	box-sizing: border-box;
 	flex-direction: column;
 }
-/* #endif */
 
 .exchange-order {
 	min-height: 100vh;

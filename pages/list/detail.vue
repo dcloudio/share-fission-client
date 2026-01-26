@@ -311,10 +311,7 @@
 	.uni-note {
 		color: #999;
 		font-size: 12px;
-
-		/* #ifndef APP-NVUE */
 		display: flex;
-		/* #endif */
 		flex-direction: row;
 		align-items: center;
 	}

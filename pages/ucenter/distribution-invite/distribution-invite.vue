@@ -195,13 +195,11 @@ export default {
 </script>
 
 <style lang="scss" scoped>
-/* #ifndef APP-NVUE */
 view {
 	display: flex;
 	box-sizing: border-box;
 	flex-direction: column;
 }
-/* #endif */
 
 .distribution-invite {
 	min-height: 100vh;

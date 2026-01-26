@@ -109,7 +109,6 @@
 </script>
 
 <style>
-	/* #ifndef APP-NVUE */
 	page {
 		display: flex;
 		flex-direction: column;
@@ -123,9 +122,7 @@
 		line-height: inherit;
 	}
 	.example-body {
-		/* #ifndef APP-NVUE */
 		display: flex;
-		/* #endif */
 		flex-direction: row;
 		flex-wrap: wrap;
 		justify-content: center;
@@ -133,7 +130,6 @@
 		font-size: 14px;
 		background-color: #ffffff;
 	}
-	/* #endif */
 	
 	.section-box{
 		display: flex;
@@ -152,11 +148,6 @@
 		margin-left: 15rpx;
 	}
 
-	/* #ifdef APP-NVUE */
-	.warp {
-		background-color: #fff;
-	}
-	/* #endif */
 
 	.example-body {
 		flex-direction: column;
@@ -183,16 +174,12 @@
 	}
 
 	.example-body {
-		/* #ifndef APP-NVUE */
 		display: block;
-		/* #endif */
 	}
 
 	.grid-item-box {
 		flex: 1;
-		/* #ifndef APP-NVUE */
 		display: flex;
-		/* #endif */
 		flex-direction: column;
 		align-items: center;
 		justify-content: center;
@@ -213,9 +200,7 @@
 	}
 
 	.search-container-bar {
-		/* #ifndef APP-NVUE */
 		display: flex;
-		/* #endif */
 		flex-direction: row;
 		justify-content: center;
 		align-items: center;
@@ -226,17 +211,11 @@
 		background-color: #fff;
 	}
 
-	/* #ifndef APP-NVUE || VUE3*/
-	::v-deep
-	/* #endif */
-	.uni-searchbar__box {
+	::v-deep .uni-searchbar__box {
 		border-width: 0;
 	}
 
-	/* #ifndef APP-NVUE || VUE3 */
-	::v-deep
-	/* #endif */
-	.uni-input-placeholder {
+	::v-deep .uni-input-placeholder {
 		font-size: 28rpx;
 	}
 </style>

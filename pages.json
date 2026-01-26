@@ -75,7 +75,7 @@
 		{
 			"path": "pages/ucenter/my-team/my-team",
 			"style": {
-				"navigationBarTitleText": "我的团队",
+				"navigationStyle": "custom",
 				"enablePullDownRefresh": false
 			}
 		},
@@ -94,7 +94,7 @@
 		{
 			"path": "pages/ucenter/points-mall/points-mall",
 			"style": {
-				"navigationBarTitleText": "积分商城"
+				"navigationStyle": "custom"
 			}
 		},
 		{

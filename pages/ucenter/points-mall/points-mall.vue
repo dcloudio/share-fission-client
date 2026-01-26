@@ -55,32 +55,34 @@
 		</view>
 
 		<!-- 商品列表 -->
-		<view class="product-list">
-			<view
-				v-for="(product, index) in sortedProducts"
-				:key="product.id"
-				class="product-item"
-				@click="toProductDetail(product.id)"
-			>
-				<view class="product-image-wrapper">
-					<image class="product-image" :src="product.image" mode="aspectFill"></image>
-					<view v-if="product.stock <= 10" class="stock-tag">
-						<text class="stock-text">仅剩{{ product.stock }}件</text>
-					</view>
-				</view>
-				<view class="product-info">
-					<text class="product-name">{{ product.name }}</text>
-					<text class="product-desc">{{ product.desc }}</text>
-					<view class="product-footer">
-						<view class="product-points">
-							<text class="points-number">{{ product.points }}</text>
-							<text class="points-unit">积分</text>
-						</view>
-						<text class="exchange-count">已兑{{ product.soldCount }}</text>
-					</view>
-				</view>
-			</view>
-		</view>
+		<scroll-view class="product-list" scroll-y>
+      <view class="scroll-content">
+        <view
+        	v-for="(product, index) in sortedProducts"
+        	:key="product.id"
+        	class="product-item"
+        	@click="toProductDetail(product.id)"
+        >
+        	<view class="product-image-wrapper">
+        		<image class="product-image" :src="product.image" mode="aspectFill"></image>
+        		<view v-if="product.stock <= 10" class="stock-tag">
+        			<text class="stock-text">仅剩{{ product.stock }}件</text>
+        		</view>
+        	</view>
+        	<view class="product-info">
+        		<text class="product-name">{{ product.name }}</text>
+        		<text class="product-desc">{{ product.desc }}</text>
+        		<view class="product-footer">
+        			<view class="product-points">
+        				<text class="points-number">{{ product.points }}</text>
+        				<text class="points-unit">积分</text>
+        			</view>
+        			<text class="exchange-count">已兑{{ product.soldCount }}</text>
+        		</view>
+        	</view>
+        </view>
+      </view>
+		</scroll-view>
 
 		<!-- 空状态 -->
 		<view v-if="filteredProducts.length === 0" class="empty-state">
@@ -320,255 +322,256 @@ export default {
 </script>
 
 <style lang="scss" scoped>
-/* #ifndef APP-NVUE */
-view {
+page, view {
 	display: flex;
 	box-sizing: border-box;
 	flex-direction: column;
 }
-/* #endif */
+
+page {
+	height: 100%;
+	background: #f5f5f5;
+}
 
 .points-mall {
-	min-height: 100vh;
+	flex: 1;
 	background: #f5f5f5;
-	padding-bottom: 40rpx;
-}
-
-/* 顶部积分余额 */
-.header-balance {
-	background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-	padding: 40rpx 30rpx;
-	flex-direction: row;
-	justify-content: space-between;
-	align-items: center;
-}
-
-.balance-info {
-	flex-direction: row;
-	align-items: baseline;
-}
-
-.balance-label {
-	font-size: 28rpx;
-	color: rgba(255, 255, 255, 0.9);
-	margin-right: 16rpx;
-}
-
-.balance-number {
-	font-size: 48rpx;
-	font-weight: bold;
-	color: #FFFFFF;
-}
-
-.order-link {
-	flex-direction: row;
-	align-items: center;
-	padding: 12rpx 24rpx;
-	background: rgba(255, 255, 255, 0.2);
-	border-radius: 30rpx;
-}
-
-.order-text {
-	font-size: 26rpx;
-	color: #FFFFFF;
-	margin-right: 4rpx;
-}
-
-/* 分类筛选 */
-.category-filter {
-	background: #FFFFFF;
-	padding: 20rpx 0;
-	margin-bottom: 20rpx;
-}
-
-.category-scroll {
-	white-space: nowrap;
-}
-
-.category-list {
-	flex-direction: row;
-	padding: 0 20rpx;
-}
-
-.category-item {
-	padding: 12rpx 32rpx;
-	margin-right: 20rpx;
-	background: #f8f8f8;
-	border-radius: 30rpx;
-	white-space: nowrap;
-}
-
-.category-item.active {
-	background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-}
-
-.category-text {
-	font-size: 28rpx;
-	color: #333333;
-  white-space: nowrap;
-}
-
-.category-item.active .category-text {
-	color: #FFFFFF;
-	font-weight: 500;
-}
-
-/* 排序栏 */
-.sort-bar {
-	background: #FFFFFF;
-	padding: 20rpx 30rpx;
-	margin-bottom: 20rpx;
-	flex-direction: row;
-	justify-content: space-between;
-	align-items: center;
-}
-
-.sort-left {
-
-}
-
-.result-count {
-	font-size: 26rpx;
-	color: #999999;
-}
-
-.sort-right {
-	flex-direction: row;
-	align-items: center;
-}
-
-.sort-item {
-	flex-direction: row;
-	align-items: center;
-	margin-left: 20rpx;
-	padding: 8rpx 16rpx;
-	border-radius: 20rpx;
-}
-
-.sort-item.active {
-	background: rgba(0, 122, 255, 0.1);
-}
-
-.sort-text {
-	font-size: 26rpx;
-	color: #666666;
-	margin-right: 4rpx;
-}
-
-.sort-item.active .sort-text {
-	color: #007AFF;
-	font-weight: 500;
-}
-
-/* 商品列表 */
-.product-list {
-	padding: 0 20rpx;
-	flex-direction: row;
-	flex-wrap: wrap;
-	justify-content: space-between;
-}
-
-.product-item {
-	width: 345rpx;
-	background: #FFFFFF;
-	border-radius: 16rpx;
-	margin-bottom: 20rpx;
 	overflow: hidden;
-}
 
-.product-image-wrapper {
-	width: 345rpx;
-	height: 345rpx;
-	position: relative;
-}
+	/* 顶部积分余额 */
+	.header-balance {
+		background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+		padding: 40rpx 30rpx;
+		flex-direction: row;
+		justify-content: space-between;
+		align-items: center;
 
-.product-image {
-	width: 100%;
-	height: 100%;
-}
+		.balance-info {
+			flex-direction: row;
+			align-items: baseline;
 
-.stock-tag {
-	position: absolute;
-	top: 16rpx;
-	right: 0;
-	background: rgba(255, 107, 107, 0.9);
-	padding: 8rpx 16rpx;
-	border-radius: 30rpx 0 0 30rpx;
-}
+			.balance-label {
+				font-size: 14px;
+				color: rgba(255, 255, 255, 0.9);
+				margin-right: 16rpx;
+			}
 
-.stock-text {
-	font-size: 22rpx;
-	color: #FFFFFF;
-}
+			.balance-number {
+				font-size: 24px;
+				font-weight: bold;
+				color: #FFFFFF;
+			}
+		}
 
-.product-info {
-	padding: 20rpx;
-}
+		.order-link {
+			flex-direction: row;
+			align-items: center;
+			padding: 12rpx 24rpx;
+			background: rgba(255, 255, 255, 0.2);
+			border-radius: 30rpx;
 
-.product-name {
-	font-size: 30rpx;
-	color: #333333;
-	font-weight: 500;
-	margin-bottom: 8rpx;
-	/* #ifndef APP-NVUE */
-	overflow: hidden;
-	text-overflow: ellipsis;
-	white-space: nowrap;
-	/* #endif */
-}
+			.order-text {
+				font-size: 13px;
+				color: #FFFFFF;
+				margin-right: 4rpx;
+			}
+		}
+	}
 
-.product-desc {
-	font-size: 24rpx;
-	color: #999999;
-	margin-bottom: 16rpx;
-	/* #ifndef APP-NVUE */
-	overflow: hidden;
-	text-overflow: ellipsis;
-	white-space: nowrap;
-	/* #endif */
-}
+	/* 分类筛选 */
+	.category-filter {
+		background: #FFFFFF;
+		padding: 20rpx 0;
+		margin-bottom: 20rpx;
 
-.product-footer {
-	flex-direction: row;
-	justify-content: space-between;
-	align-items: flex-end;
-}
+		.category-scroll {
+			white-space: nowrap;
 
-.product-points {
-	flex-direction: row;
-	align-items: baseline;
-}
+			.category-list {
+				flex-direction: row;
+				padding: 0 20rpx;
 
-.points-number {
-	font-size: 36rpx;
-	font-weight: bold;
-	color: #ff6b6b;
-	margin-right: 4rpx;
-}
+				.category-item {
+					padding: 12rpx 32rpx;
+					margin-right: 20rpx;
+					background: #f8f8f8;
+					border-radius: 30rpx;
+					white-space: nowrap;
 
-.points-unit {
-	font-size: 24rpx;
-	color: #ff6b6b;
-}
+					.category-text {
+						font-size: 14px;
+						color: #333333;
+						white-space: nowrap;
+					}
 
-.exchange-count {
-	font-size: 24rpx;
-	color: #999999;
-}
+					&.active {
+						background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
 
-/* 空状态 */
-.empty-state {
-	background: #FFFFFF;
-	border-radius: 20rpx;
-	padding: 100rpx 0;
-	margin: 0 20rpx;
-	align-items: center;
-	justify-content: center;
-}
+						.category-text {
+							color: #FFFFFF;
+							font-weight: 500;
+						}
+					}
+				}
+			}
+		}
+	}
 
-.empty-text {
-	font-size: 28rpx;
-	color: #999999;
-	margin-top: 20rpx;
+	/* 排序栏 */
+	.sort-bar {
+		background: #FFFFFF;
+		padding: 20rpx 30rpx;
+		margin-bottom: 20rpx;
+		flex-direction: row;
+		justify-content: space-between;
+		align-items: center;
+
+		.sort-left {
+			.result-count {
+				font-size: 13px;
+				color: #999999;
+			}
+		}
+
+		.sort-right {
+			flex-direction: row;
+			align-items: center;
+
+			.sort-item {
+				flex-direction: row;
+				align-items: center;
+				margin-left: 20rpx;
+				padding: 8rpx 16rpx;
+				border-radius: 20rpx;
+
+				.sort-text {
+					font-size: 13px;
+					color: #666666;
+					margin-right: 4rpx;
+				}
+
+				&.active {
+					background: rgba(0, 122, 255, 0.1);
+
+					.sort-text {
+						color: #007AFF;
+						font-weight: 500;
+					}
+				}
+			}
+		}
+	}
+
+	/* 商品列表 */
+	.product-list {
+		height: 0;
+		flex: 1;
+
+		.scroll-content {
+			flex-direction: row;
+			flex-wrap: wrap;
+			justify-content: space-around;
+
+			.product-item {
+				width: 345rpx;
+				background: #FFFFFF;
+				border-radius: 16rpx;
+				margin-bottom: 20rpx;
+				overflow: hidden;
+
+				.product-image-wrapper {
+					width: 345rpx;
+					height: 345rpx;
+					position: relative;
+
+					.product-image {
+						width: 100%;
+						height: 100%;
+					}
+
+					.stock-tag {
+						position: absolute;
+						top: 16rpx;
+						right: 0;
+						background: rgba(255, 107, 107, 0.9);
+						padding: 8rpx 16rpx;
+						border-radius: 30rpx 0 0 30rpx;
+
+						.stock-text {
+							font-size: 11px;
+							color: #FFFFFF;
+						}
+					}
+				}
+
+				.product-info {
+					padding: 20rpx;
+
+					.product-name {
+						font-size: 15px;
+						color: #333333;
+						font-weight: 500;
+						margin-bottom: 8rpx;
+						overflow: hidden;
+						text-overflow: ellipsis;
+						white-space: nowrap;
+					}
+
+					.product-desc {
+						font-size: 12px;
+						color: #999999;
+						margin-bottom: 16rpx;
+						overflow: hidden;
+						text-overflow: ellipsis;
+						white-space: nowrap;
+					}
+
+					.product-footer {
+						flex-direction: row;
+						justify-content: space-between;
+						align-items: flex-end;
+
+						.product-points {
+							flex-direction: row;
+							align-items: baseline;
+
+							.points-number {
+								font-size: 18px;
+								font-weight: bold;
+								color: #ff6b6b;
+								margin-right: 4rpx;
+							}
+
+							.points-unit {
+								font-size: 12px;
+								color: #ff6b6b;
+							}
+						}
+
+						.exchange-count {
+							font-size: 12px;
+							color: #999999;
+						}
+					}
+				}
+			}
+		}
+	}
+
+	/* 空状态 */
+	.empty-state {
+		background: #FFFFFF;
+		border-radius: 20rpx;
+		padding: 100rpx 0;
+		margin: 0 20rpx;
+		align-items: center;
+		justify-content: center;
+
+		.empty-text {
+			font-size: 14px;
+			color: #999999;
+			margin-top: 20rpx;
+		}
+	}
 }
 </style>
