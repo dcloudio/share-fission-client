@@ -6,18 +6,14 @@
 			<uni-list-item v-if="userInfo.mobile" :title="$t('settings.changePassword')" :to="'/pages/ucenter/login-page/pwd-retrieve/pwd-retrieve?phoneNumber='+ userInfo.mobile" link="navigateTo"></uni-list-item>
 		</uni-list>
 		<uni-list class="mt10" :border="false">
-		<!-- #ifndef H5 -->
-			<!-- #ifdef APP-PLUS -->
-			<!-- 检查push过程未结束不显示，push设置项 -->
-			<uni-list-item :title="$t('settings.clearTmp')" @click="clearTmp" link></uni-list-item>
-			<uni-list-item v-show="pushIsOn != 'wait'" :title="$t('settings.pushServer')" @click.native="pushIsOn?pushServer.off():pushServer.on()"  showSwitch :switchChecked="pushIsOn"></uni-list-item>
-			<!-- #endif -->
-			<uni-list-item v-if="supportMode.includes('fingerPrint')" :title="$t('settings.fingerPrint')" @click.native="startSoterAuthentication('fingerPrint')" link></uni-list-item>
-			<uni-list-item v-if="supportMode.includes('facial')" :title="$t('settings.facial')" @click="startSoterAuthentication('facial')" link></uni-list-item>
-		<!-- #endif -->
-			<uni-list-item v-if="i18nEnable" :title="$t('settings.changeLanguage')" @click="changeLanguage" :rightText="currentLanguage" link></uni-list-item>
+    <!-- #ifdef APP-PLUS -->
+    <!-- 检查push过程未结束不显示，push设置项 -->
+    <uni-list-item :title="$t('settings.clearTmp')" @click="clearTmp" link></uni-list-item>
+    <uni-list-item v-show="pushIsOn != 'wait'" :title="$t('settings.pushServer')" @click.native="pushIsOn?pushServer.off():pushServer.on()"  showSwitch :switchChecked="pushIsOn"></uni-list-item>
+    <!-- #endif -->
+    <uni-list-item v-if="i18nEnable" :title="$t('settings.changeLanguage')" @click="changeLanguage" :rightText="currentLanguage" link></uni-list-item>
 		</uni-list>
-		
+
 		<!-- 退出/登录 按钮 -->
 		<view class="bottom-back" @click="changeLoginState">
 			<text class="bottom-back-text" v-if="hasLogin">{{$t('settings.logOut')}}</text>
@@ -36,7 +32,6 @@
 		data() {
 			return {
 				pushServer:pushServer,
-				supportMode:[],
 				pushIsOn:"wait",
 				currentLanguage:"",
 				userInfo:{}
@@ -52,20 +47,10 @@
 		},
 		onLoad() {
 			this.currentLanguage = uni.getStorageSync('CURRENT_LANG') == "en"?'English':'简体中文'
-			
+
 			uni.setNavigationBarTitle({
 				title: this.$t('settings.navigationBarTitle')
 			})
-			// #ifdef APP || MP-WEIXIN || (APP-HARMONY && uniVersion > 4.31)
-			uni.checkIsSupportSoterAuthentication({
-				success: (res) => {
-					this.supportMode = res.supportMode
-				},
-				fail: (err) => {
-					console.log(err);
-				}
-			})
-			// #endif
 		},
 		onShow() {
 			// 检查手机端获取推送是否开启
@@ -84,56 +69,6 @@
 						url: '/uni_modules/uni-id-pages/pages/login/login-withoutpwd',
 					});
 				}
-			},
-			/**
-			 * 开始生物认证
-			 */
-			startSoterAuthentication(checkAuthMode) {
-				console.log(checkAuthMode);
-				let title = {"fingerPrint":this.$t('settings.fingerPrint'),"facial":this.$t('settings.facial')}[checkAuthMode]
-				// 检查是否开启认证
-				this.checkIsSoterEnrolledInDevice({checkAuthMode,title})
-					.then(() => {
-						console.log(checkAuthMode,title);
-						// 开始认证
-						uni.startSoterAuthentication({
-							requestAuthModes: [checkAuthMode],
-							challenge: '123456', // 微信端挑战因子
-							authContent: this.$t('settings.please')+ " " + `${title}`,
-							complete: (res) => {
-								console.log(res);
-							},
-							success: (res) => {
-								console.log(res);
-								if (res.errCode == 0) {
-									/**
-									 * 验证成功后开启自己的业务逻辑
-									 * 
-									 * app端以此为依据 验证成功
-									 * 
-									 * 微信小程序需要再次通过后台验证resultJSON与resultJSONSignature获取最终结果
-									 */
-									return uni.showToast({
-										title: `${title}`+this.$t('settings.successText'),
-										icon: 'none'
-									});
-								}
-								uni.showToast({
-									title:this.$t('settings.failTip'),
-									icon: 'none'
-								});
-							},
-							fail: (err) => {
-								console.log(err);
-								console.log(`认证失败:${err.errCode}`);
-								uni.showToast({
-									title:this.$t('settings.authFailed'),
-									// title: `认证失败`,
-									icon: 'none'
-								});
-							}
-						})
-					})
 			},
 			checkIsSoterEnrolledInDevice({checkAuthMode,title}) {
 				return new Promise((resolve, reject) => {
@@ -168,7 +103,7 @@
 				});
 				/*
 				任何临时存储或删除不直接影响程序运行逻辑（清除缓存必定造成业务逻辑的变化，如：打开页面的图片不从缓存中读取而从网络请求）的内容都可以视为缓存。主要有storage、和file写入。
-				缓存分为三部分		
+				缓存分为三部分
 					原生层（如：webview、x5播放器的、第三方sdk的、地图组件等）
 					前端框架（重启就会自动清除）
 					开发者自己的逻辑（如：
@@ -209,7 +144,7 @@
 				uni.showActionSheet({
 					itemList: ["English","简体中文"],
 					success: res => {
-						console.log(res.tapIndex); 
+						console.log(res.tapIndex);
 						let language = uni.getStorageSync('CURRENT_LANG')
 						if(
 							!res.tapIndex && language=='zh-Hans' || res.tapIndex && language=='en'
