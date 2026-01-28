@@ -93,11 +93,6 @@
 						},
 						//#endif
 						{
-							"title":this.$t('mine.readArticles'),
-							"to": '/pages/ucenter/read-news-log/read-news-log',
-							"icon": "flag"
-						},
-						{
 							"title": this.$t('mine.myScore'),
 							"to": '',
 							"event": 'getScore',

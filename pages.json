@@ -2,41 +2,7 @@
 	"pages": [{
 			"path": "pages/list/list",
 			"style": {
-				// #ifndef APP
-				"enablePullDownRefresh": true,
-				// #endif
 				"navigationStyle": "custom"
-			}
-		},
-		{
-			"path": "pages/grid/grid",
-			"style": {
-				//#ifndef MP
-				"navigationStyle": "custom"
-				//#endif
-			}
-		}, {
-			"path": "pages/list/search/search",
-			"style": {
-				"navigationBarTitleText": "搜索"
-			}
-		}, {
-			"path": "pages/list/detail",
-			"style": {
-				"app-plus": {
-					"titleNView": {
-						"buttons": [{
-							"type": "share"
-						}],
-						"type": "transparent"
-					}
-				},
-				"h5": {
-					"titleNView": {
-						"type": "transparent"
-					}
-				},
-				"navigationBarTitleText": "文章详情"
 			}
 		},
 		{
@@ -57,13 +23,6 @@
 			"path": "pages/ucenter/settings/settings",
 			"style": {
 				"navigationBarTitleText": "设置"
-			}
-		},
-		{
-			"path": "pages/ucenter/read-news-log/read-news-log",
-			"style": {
-				"navigationBarTitleText": "阅读记录",
-				"enablePullDownRefresh": true
 			}
 		},
 		{
