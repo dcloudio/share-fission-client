@@ -1,6 +1,6 @@
 {
 	"pages": [{
-			"path": "pages/list/list",
+			"path": "pages/index/index",
 			"style": {
 				"navigationStyle": "custom"
 			}
@@ -247,9 +247,9 @@
 		"borderStyle": "black",
 		"backgroundColor": "#FFFFFF",
 		"list": [{
-			"pagePath": "pages/list/list",
-			"iconPath": "static/tabbar/list.png",
-			"selectedIconPath": "static/tabbar/list_active.png",
+			"pagePath": "pages/index/index",
+			"iconPath": "static/tabbar/index.png",
+			"selectedIconPath": "static/tabbar/index_active.png",
 			"text": "猜谜语"
 		}, {
 			"pagePath": "pages/ucenter/points-mall/points-mall",
