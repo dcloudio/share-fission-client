@@ -94,6 +94,7 @@
 
 <script>
 const db = uniCloud.database();
+const sfCo = uniCloud.importObject('share-fission-co', { customUI: true });
 
 export default {
 	data() {
@@ -101,143 +102,28 @@ export default {
 			// 用户积分
 			userPoints: 5000,
 
-			// 分类
+			// 分类（后端动态加载，这里只保留“全部”兜底）
 			categories: [
-				{ label: '全部', value: 'all' },
-				{ label: '会员卡', value: 'vip' },
-				{ label: '游戏币', value: 'game' },
-				{ label: '优惠券', value: 'coupon' },
-				{ label: '话费充值', value: 'phone' },
-				{ label: '视频会员', value: 'video' }
+				{ label: '全部', value: 'all' }
 			],
 			currentCategory: 'all',
 
 			// 排序
 			sortType: 'asc', // asc: 积分从低到高, desc: 积分从高到低
 
-			// 商品列表（虚拟数据）
-			products: [
-				{
-					id: 'P001',
-					name: '爱奇艺会员月卡',
-					desc: '30天畅享海量影视',
-					category: 'video',
-					points: 1500,
-					stock: 50,
-					soldCount: 1230,
-					image: 'https://via.placeholder.com/300x300/667eea/ffffff?text=爱奇艺',
-					images: [
-						'https://via.placeholder.com/750x750/667eea/ffffff?text=爱奇艺1',
-						'https://via.placeholder.com/750x750/764ba2/ffffff?text=爱奇艺2'
-					],
-					detail: '爱奇艺黄金VIP会员月卡，30天有效期，畅享海量影视资源、蓝光画质、广告特权等。兑换成功后，卡密将在订单详情中显示。'
-				},
-				{
-					id: 'P002',
-					name: '腾讯视频会员月卡',
-					desc: '好剧抢先看',
-					category: 'video',
-					points: 1500,
-					stock: 100,
-					soldCount: 980,
-					image: 'https://via.placeholder.com/300x300/ff6b6b/ffffff?text=腾讯视频',
-					images: [
-						'https://via.placeholder.com/750x750/ff6b6b/ffffff?text=腾讯1',
-						'https://via.placeholder.com/750x750/ee5a6f/ffffff?text=腾讯2'
-					],
-					detail: '腾讯视频VIP会员月卡，30天有效期，热播剧集抢先看，海量内容随心享。'
-				},
-				{
-					id: 'P003',
-					name: '王者荣耀点券',
-					desc: '1000点券',
-					category: 'game',
-					points: 1000,
-					stock: 8,
-					soldCount: 2340,
-					image: 'https://via.placeholder.com/300x300/feca57/333333?text=王者荣耀',
-					images: [
-						'https://via.placeholder.com/750x750/feca57/333333?text=王者1',
-						'https://via.placeholder.com/750x750/ff9ff3/333333?text=王者2'
-					],
-					detail: '王者荣耀1000点券充值卡，可用于购买皮肤、英雄等游戏道具。兑换后请在游戏内使用卡密充值。'
-				},
-				{
-					id: 'P004',
-					name: '网易云音乐黑胶VIP',
-					desc: '月度会员',
-					category: 'vip',
-					points: 800,
-					stock: 200,
-					soldCount: 567,
-					image: 'https://via.placeholder.com/300x300/ee5a6f/ffffff?text=网易云',
-					images: [
-						'https://via.placeholder.com/750x750/ee5a6f/ffffff?text=网易云1',
-						'https://via.placeholder.com/750x750/c23616/ffffff?text=网易云2'
-					],
-					detail: '网易云音乐黑胶VIP月卡，畅享无损音质、下载歌曲、个性化推荐等特权。'
-				},
-				{
-					id: 'P005',
-					name: '10元话费充值',
-					desc: '全国通用',
-					category: 'phone',
-					points: 1000,
-					stock: 500,
-					soldCount: 3450,
-					image: 'https://via.placeholder.com/300x300/48dbfb/ffffff?text=话费',
-					images: [
-						'https://via.placeholder.com/750x750/48dbfb/ffffff?text=话费1',
-						'https://via.placeholder.com/750x750/0abde3/ffffff?text=话费2'
-					],
-					detail: '10元话费充值，支持移动、联通、电信三网，全国通用。充值成功后5分钟内到账。'
-				},
-				{
-					id: 'P006',
-					name: '50元优惠券',
-					desc: '满100可用',
-					category: 'coupon',
-					points: 500,
-					stock: 1000,
-					soldCount: 890,
-					image: 'https://via.placeholder.com/300x300/5f27cd/ffffff?text=优惠券',
-					images: [
-						'https://via.placeholder.com/750x750/5f27cd/ffffff?text=券1',
-						'https://via.placeholder.com/750x750/341f97/ffffff?text=券2'
-					],
-					detail: '50元通用优惠券，满100元可用，适用于全平台商品，有效期30天。'
-				},
-				{
-					id: 'P007',
-					name: '喜马拉雅会员月卡',
-					desc: '听书神器',
-					category: 'vip',
-					points: 600,
-					stock: 150,
-					soldCount: 432,
-					image: 'https://via.placeholder.com/300x300/ff9ff3/333333?text=喜马拉雅',
-					images: [
-						'https://via.placeholder.com/750x750/ff9ff3/333333?text=喜马1',
-						'https://via.placeholder.com/750x750/f368e0/333333?text=喜马2'
-					],
-					detail: '喜马拉雅VIP会员月卡，畅听海量有声书、精品课程。'
-				},
-				{
-					id: 'P008',
-					name: '和平精英UC',
-					desc: '600UC',
-					category: 'game',
-					points: 600,
-					stock: 300,
-					soldCount: 1876,
-					image: 'https://via.placeholder.com/300x300/00d2d3/ffffff?text=和平精英',
-					images: [
-						'https://via.placeholder.com/750x750/00d2d3/ffffff?text=精英1',
-						'https://via.placeholder.com/750x750/01a3a4/ffffff?text=精英2'
-					],
-					detail: '和平精英600UC充值，可用于购买服饰、道具等。兑换后凭卡密在游戏内充值。'
-				}
-			]
+			// 商品列表（由后端加载）
+			products: [],
+			// 后端分类ID映射（用于筛选）
+			categoryMap: {
+				all: ''
+			},
+			// 分页
+			pageIndex: 1,
+			pageSize: 200,
+			loading: false,
+			finished: false,
+			// 缓存当前列表，用于详情页读取
+			mallProductsCache: []
 		}
 	},
 	computed: {
@@ -261,8 +147,7 @@ export default {
 	},
 	onLoad() {
 		this.loadUserPoints()
-		// 保存商品数据到本地存储供详情页使用
-		uni.setStorageSync('mall_products', this.products)
+		this.loadCategoriesAndProducts()
 	},
 	methods: {
 		/**
@@ -282,7 +167,116 @@ export default {
 				}
 			} catch (error) {
 				console.error('获取积分失败:', error)
-				this.userPoints = 5000
+				this.userPoints = 0
+			}
+		},
+
+		/**
+		 * 加载分类+商品
+		 */
+		async loadCategoriesAndProducts() {
+			await this.loadCategories()
+			await this.loadProducts(true)
+		},
+
+		/**
+		 * 加载分类（client/goodsCategories/getList）
+		 */
+		async loadCategories() {
+			try {
+				const res = await sfCo.action({
+					name: 'client/goodsCategories/getList',
+					data: {
+						pageIndex: 1,
+						pageSize: 200,
+						sortField: 'sort',
+						sortOrder: 'asc'
+					}
+				})
+				const list = (res && (res.list || (res.data && res.data.list))) || []
+
+				// 组装分类：全部 + 后端分类
+				const newCategories = [{ label: '全部', value: 'all' }]
+				const map = { all: '' }
+
+				list.forEach((c) => {
+					if (c && c._id && c.name) {
+						const val = String(c._id)
+						newCategories.push({ label: String(c.name), value: val })
+						map[val] = val
+					}
+				})
+
+				this.categories = newCategories
+				this.categoryMap = map
+				// 默认选中全部
+				this.currentCategory = 'all'
+			} catch (e) {
+				console.error('加载分类失败:', e)
+				this.categories = [{ label: '全部', value: 'all' }]
+				this.categoryMap = { all: '' }
+				this.currentCategory = 'all'
+			}
+		},
+
+		/**
+		 * 加载商品（client/goods/getList）
+		 */
+		async loadProducts(reset) {
+			if (this.loading || this.finished) return
+			this.loading = true
+			try {
+				if (reset) {
+					this.products = []
+					this.pageIndex = 1
+					this.finished = false
+				}
+
+				const categoryId = this.currentCategory === 'all' ? '' : this.currentCategory
+				const res = await sfCo.action({
+					name: 'client/goods/getList',
+					data: {
+						pageIndex: this.pageIndex,
+						pageSize: this.pageSize,
+						category_id: categoryId,
+						sortField: 'sort_order',
+						sortOrder: 'desc'
+					}
+				})
+				const list = (res && (res.list || (res.data && res.data.list))) || []
+
+				const mapped = list.map((g) => {
+					return {
+						id: String(g._id || ''),
+						name: String(g.name || ''),
+						desc: String(g.description || ''),
+						category: String(g.category_id || ''),
+						points: Number(g.score_cost || 0),
+						stock: Number(g.stock || 0),
+						soldCount: Number(g.sales_count || 0),
+						image: (g.images && g.images.length > 0) ? String(g.images[0]) : '',
+						images: (g.images && g.images.length > 0) ? g.images : [],
+						detail: String(g.detail || '')
+					}
+				})
+
+				this.products = this.products.concat(mapped)
+				this.mallProductsCache = this.products
+				uni.setStorageSync('mall_products', this.mallProductsCache)
+
+				if (mapped.length < this.pageSize) {
+					this.finished = true
+				} else {
+					this.pageIndex = this.pageIndex + 1
+				}
+			} catch (e) {
+				console.error('加载商品失败:', e)
+				if (reset) {
+					this.products = []
+					uni.setStorageSync('mall_products', [])
+				}
+			} finally {
+				this.loading = false
 			}
 		},
 
@@ -291,6 +285,10 @@ export default {
 		 */
 		selectCategory(category) {
 			this.currentCategory = category
+			// 重置分页并重新加载
+			this.pageIndex = 1
+			this.finished = false
+			this.loadProducts(true)
 		},
 
 		/**
