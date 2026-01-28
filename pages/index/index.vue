@@ -228,38 +228,39 @@
 	.pages {
 		background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
 		min-height: 100vh;
-		padding-bottom: 40rpx;
+		padding-bottom: 16rpx;
+		justify-content: center;
 	}
 
 	/* 标题栏 */
 	.header {
-		padding: 60rpx 40rpx 40rpx;
+		padding: 26rpx 28rpx 14rpx;
 		align-items: center;
 	}
 
 	.header-title {
-		font-size: 24px;
+		font-size: 20px;
 		font-weight: bold;
 		color: #FFFFFF;
-		margin-bottom: 10rpx;
+		margin-bottom: 6rpx;
 	}
 
 	.header-subtitle {
-		font-size: 12px;
+		font-size: 11px;
 		color: rgba(255, 255, 255, 0.8);
 	}
 
 	/* 谜语卡片容器 */
 	.riddle-container {
-		padding: 0 30rpx;
-		margin-top: 20rpx;
+		padding: 0 24rpx;
+		margin-top: 10rpx;
 	}
 
 	.riddle-card {
 		background-color: #FFFFFF;
-		border-radius: 30rpx;
-		padding: 50rpx 40rpx;
-		box-shadow: 0 20rpx 60rpx rgba(0, 0, 0, 0.15);
+		border-radius: 22rpx;
+		padding: 26rpx 24rpx;
+		box-shadow: 0 10rpx 28rpx rgba(0, 0, 0, 0.12);
 		position: relative;
 	}
 
@@ -292,82 +293,82 @@
 
 	/* 分类标签 */
 	.category-tag {
-		margin-bottom: 30rpx;
+		margin-bottom: 12rpx;
 		align-self: flex-start;
 	}
 
 	.category-text {
-		font-size: 12px;
+		font-size: 10px;
 		color: #8c8c8c;
 		background-color: #f0f0f0;
-		padding: 8rpx 20rpx;
+		padding: 4rpx 14rpx;
 		border-radius: 15rpx;
 	}
 
 	/* 谜面区域 */
 	.question-box {
-		margin-bottom: 20rpx;
-		padding: 30rpx;
+		margin-bottom: 14rpx;
+		padding: 20rpx;
 		background-color: #f6f7fb;
 		border-radius: 20rpx;
 	}
 
 	.question-label {
-		font-size: 14px;
+		font-size: 13px;
 		color: #667eea;
 		font-weight: bold;
-		margin-bottom: 15rpx;
+		margin-bottom: 10rpx;
 	}
 
 	.question-text {
-		font-size: 16px;
+		font-size: 15px;
 		color: #262626;
-		line-height: 50rpx;
+		line-height: 40rpx;
 	}
 
 	/* 提示信息 */
 	.hint-box {
-		margin-bottom: 30rpx;
-		padding: 20rpx 30rpx;
+		margin-bottom: 18rpx;
+		padding: 14rpx 20rpx;
 		background-color: #e6f7ff;
 		border-radius: 15rpx;
 		align-items: center;
 	}
 
 	.hint-text {
-		font-size: 12px;
+		font-size: 11px;
 		color: #1890ff;
 	}
 
 	/* 输入区域 */
 	.input-box {
-		margin-bottom: 30rpx;
+		margin-bottom: 20rpx;
 		background-color: #fafafa;
 		border-radius: 20rpx;
-		padding: 30rpx;
+		padding: 20rpx;
 	}
 
 	.answer-input {
 		background-color: #FFFFFF;
 		border: 1px solid #d9d9d9;
 		border-radius: 15rpx;
-		padding: 25rpx 20rpx;
-		font-size: 15px;
+		padding: 16rpx 16rpx;
+		font-size: 14px;
 		color: #262626;
-		margin-bottom: 25rpx;
+		margin-bottom: 18rpx;
 		text-align: center;
-		height: 80rpx;
-		line-height: 80rpx;
+		height: 64rpx;
+		line-height: 64rpx;
 	}
 
 	.btn-submit {
 		background: linear-gradient(135deg, #52c41a 0%, #73d13d 100%);
-		padding: 25rpx 0;
+		padding: 16rpx 0;
 		border-radius: 15rpx;
 		align-items: center;
 		justify-content: center;
 		box-shadow: 0 8rpx 20rpx rgba(82, 196, 26, 0.3);
-		height: 80rpx;
+		height: 64rpx;
 	}
 
 	.btn-submit-text {
@@ -378,19 +379,19 @@
 
 	/* 答案区域 */
 	.answer-box {
-		margin-bottom: 40rpx;
-		padding: 30rpx;
+		margin-bottom: 22rpx;
+		padding: 22rpx;
 		background-color: #fff7e6;
 		border-radius: 20rpx;
-		min-height: 120rpx;
+		min-height: 90rpx;
 		justify-content: center;
 	}
 
 	.answer-label {
-		font-size: 14px;
+		font-size: 13px;
 		color: #fa8c16;
 		font-weight: bold;
-		margin-bottom: 15rpx;
+		margin-bottom: 10rpx;
 	}
 
 	.answer-revealed {
@@ -398,7 +399,7 @@
 	}
 
 	.answer-text {
-		font-size: 20px;
+		font-size: 18px;
 		color: #d4380d;
 		font-weight: bold;
 	}
@@ -414,7 +415,7 @@
 	}
 
 	.congratulations {
-		margin-top: 20rpx;
+		margin-top: 10rpx;
 		align-items: center;
 	}
 
@@ -426,22 +427,22 @@
 
 	/* 提示区域 */
 	.tip-box {
-		margin-bottom: 30rpx;
-		padding: 20rpx;
+		margin-bottom: 20rpx;
+		padding: 14rpx;
 		background-color: #fff7e6;
 		border-radius: 15rpx;
 		align-items: center;
 	}
 
 	.tip-text {
-		font-size: 12px;
+		font-size: 11px;
 		color: #fa8c16;
-		margin-bottom: 15rpx;
+		margin-bottom: 8rpx;
 	}
 
 	.btn-ad-hint {
 		background: linear-gradient(135deg, #ff6b6b 0%, #ee5a6f 100%);
-		padding: 15rpx 40rpx;
+		padding: 12rpx 30rpx;
 		border-radius: 30rpx;
 		box-shadow: 0 8rpx 20rpx rgba(238, 90, 111, 0.3);
 	}
@@ -466,8 +467,8 @@
 
 	.btn-next {
 		background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-		padding: 25rpx 60rpx;
-		border-radius: 50rpx;
+		padding: 20rpx 42rpx;
+		border-radius: 36rpx;
 		box-shadow: 0 10rpx 30rpx rgba(102, 126, 234, 0.3);
 	}
 
@@ -480,11 +481,11 @@
 	/* 进度指示器 */
 	.progress-box {
 		align-items: center;
-		margin-top: 40rpx;
+		margin-top: 20rpx;
 	}
 
 	.progress-text {
-		font-size: 13px;
+		font-size: 12px;
 		color: rgba(255, 255, 255, 0.9);
 	}
 
@@ -492,14 +493,14 @@
 	.nav-buttons {
 		flex-direction: row;
 		justify-content: space-around;
-		padding: 0 30rpx;
-		margin-top: 40rpx;
+		padding: 0 24rpx;
+		margin-top: 20rpx;
 	}
 
 	.btn-nav {
 		background-color: rgba(255, 255, 255, 0.2);
-		padding: 20rpx 50rpx;
-		border-radius: 40rpx;
+		padding: 14rpx 36rpx;
+		border-radius: 32rpx;
 		border: 1px solid rgba(255, 255, 255, 0.3);
 	}
 
@@ -508,7 +509,7 @@
 	}
 
 	.nav-text {
-		font-size: 13px;
+		font-size: 12px;
 		color: #FFFFFF;
 	}
 </style>
