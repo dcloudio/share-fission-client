@@ -9,12 +9,12 @@
 				<uqrcode :size="100" canvas-id="qrcode" :value="about.download"></uqrcode>
 			</view>
 			
-			<text class="tip">{{$t('about.sacnQR')}} {{about.appName}} {{$t('about.client')}}</text>
+			<text class="tip">扫描二维码，您的朋友也可以下载 {{about.appName}} 客户端</text>
 		</view>
 		<view class="copyright">
 			<view class="agreement-box" v-for="(agreement,index) in agreements" :key="index">
 				<text class="agreement" @click="navigateTo(agreement)">《{{agreement.title}}》</text>
-				<text class="hint" v-if="agreements.length-1>index">{{$t('about.and')}}</text>
+				<text class="hint" v-if="agreements.length-1>index">和</text>
 			</view>
 			<text class="hint">Copyright © {{year}}</text>
 			<text class="hint">{{about.company}}</text>
@@ -78,7 +78,7 @@
 		created() {
 			this.about = this.uniStarterConfig.about
 			uni.setNavigationBarTitle({
-				title: this.$t('about.about')+ " " + this.about.appName
+				title: "关于" + " " + this.about.appName
 			})
 			this.year = (new Date).getFullYear()
 		},
@@ -99,7 +99,7 @@
 				},
 				menus: [{
 						"img": "/static/app/sharemenu/wechatfriend.png",
-						"text": this.$t('common.wechatFriends'),
+						"text": "微信好友",
 						"share": {
 							"provider": "weixin",
 							"scene": "WXSceneSession"
@@ -107,7 +107,7 @@
 					},
 					{
 						"img": "/static/app/sharemenu/wechatmoments.png",
-						"text":  this.$t('common.wechatBbs'),
+						"text":  "微信朋友圈",
 						"share": {
 							"provider": "weixin",
 							"scene": "WXSceneTimeline"
@@ -115,7 +115,7 @@
 					},
 					{
 						"img": "/static/app/sharemenu/weibo.png",
-						"text":  this.$t('common.weibo'),
+						"text":  "微博",
 						"share": {
 							"provider": "sinaweibo"
 						}
@@ -129,16 +129,16 @@
 					},
 					{
 						"img": "/static/app/sharemenu/copyurl.png",
-						"text": this.$t('common.copy'),
+						"text": "复制",
 						"share": "copyurl"
 					},
 					{
 						"img": "/static/app/sharemenu/more.png",
-						"text": this.$t('common.more'),
+						"text": "更多",
 						"share": "shareSystem"
 					}
 				],
-				cancelText: this.$t('common.cancelShare'),
+				cancelText: "取消分享",
 			}, e => { //callback
 				console.log(e);
 			})

@@ -10,7 +10,7 @@
 
 			<view class="logo-title">
 				<text class="uer-name" v-if="hasLogin">{{userInfo.nickname||userInfo.username||userInfo.mobile}}</text>
-				<text class="uer-name" v-else>{{$t('mine.notLogged')}}</text>
+				<text class="uer-name" v-else>未登录</text>
 			</view>
 		</view>
 		<uni-grid class="grid" :column="4" :showBorder="false" :square="true">
@@ -60,19 +60,19 @@
 		data() {
 			return {
 				gridList: [{
-						"text": this.$t('mine.showText'),
+						"text": "文字",
 						"icon": "chat"
 					},
 					{
-						"text": this.$t('mine.showText'),
+						"text": "文字",
 						"icon": "cloud-upload"
 					},
 					{
-						"text": this.$t('mine.showText'),
+						"text": "文字",
 						"icon": "contact"
 					},
 					{
-						"text": this.$t('mine.showText'),
+						"text": "文字",
 						"icon": "download"
 					}
 				],
@@ -80,47 +80,47 @@
 					[
 						// #ifdef APP-PLUS
 						{
-							"title": this.$t('mine.signInByAd'),
+							"title": "看广告签到",
 							"event": 'signInByAd',
 							"icon": "compose"
 						},
 						// #endif
 						// #ifdef APP-PLUS
 						{
-							"title": this.$t('mine.toEvaluate'),
+							"title": "去评分",
 							"event": 'gotoMarket',
 							"icon": "star"
 						},
 						//#endif
 						{
-							"title": this.$t('mine.myScore'),
+							"title": "我的积分",
 							"to": '',
 							"event": 'getScore',
 							"icon": "paperplane"
 						},
 						{
-							"title": this.$t('mine.withdraw'),
+							"title": "积分提现",
 							"to": '/pages/ucenter/withdraw/withdraw',
 							"icon": "wallet"
 						},
 						{
-							"title": this.$t('mine.invite'),
+							"title": "分销推荐",
 							"to": '/pages/ucenter/distribution-invite/distribution-invite',
 							"icon": "redo"
 						}
 					],
 					[{
-						"title": this.$t('mine.feedback'),
+						"title": "问题与反馈",
 						"to": '/uni_modules/uni-feedback/pages/opendb-feedback/opendb-feedback',
 						"icon": "help"
 					}, {
-						"title": this.$t('mine.settings'),
+						"title": "设置",
 						"to": '/pages/ucenter/settings/settings',
 						"icon": "gear"
 					}],
 					// #ifdef APP
 					[{
-						"title": this.$t('mine.about'),
+						"title": "关于",
 						"to": '/pages/ucenter/about/about',
 						"icon": "info"
 					}]
@@ -141,7 +141,7 @@
 		onLoad() {
 			//#ifdef APP-PLUS
 			this.ucenterList[this.ucenterList.length - 2].unshift({
-				title:this.$t('mine.checkUpdate'),// this.this.$t('mine.checkUpdate')"检查更新"
+				title:"检查更新",// this.this.$t('mine.checkUpdate')"检查更新"
 				rightText: this.appVersion.version + '-' + this.appVersion.versionCode,
 				event: 'checkVersion',
 				icon: 'loop',
@@ -206,7 +206,7 @@
 			tapGrid(index) {
 				uni.showToast({
 					// title: '你点击了，第' + (index + 1) + '个',
-					title: this.$t('mine.clicked') + " " + (index + 1) ,
+					title: "你点击了" + " " + (index + 1) ,
 					icon: 'none'
 				});
 			},
@@ -238,7 +238,7 @@
 			 */
 			getScore() {
 				if (!this.userInfo) return uni.showToast({
-					title: this.$t('mine.checkScore'),
+					title: "请登录后查看积分",
 					icon: 'none'
 				});
 				uni.showLoading({
@@ -254,7 +254,7 @@
 						console.log(res);
 						const data = res.result.data[0];
 						let msg = '';
-						msg = data ? (this.$t('mine.currentScore')+ data.balance) : this.$t('mine.noScore');
+						msg = data ? ("当前积分为"+ data.balance) : "当前无积分";
 						uni.showToast({
 							title: msg,
 							icon: 'none'
@@ -292,7 +292,7 @@
 					},
 					menus: [{
 							"img": "/static/app/sharemenu/wechatfriend.png",
-							"text": this.$t('common.wechatFriends'),
+							"text": "微信好友",
 							"share": {
 								"provider": "weixin",
 								"scene": "WXSceneSession"
@@ -300,7 +300,7 @@
 						},
 						{
 							"img": "/static/app/sharemenu/wechatmoments.png",
-							"text": this.$t('common.wechatBbs'),
+							"text": "微信朋友圈",
 							"share": {
 								"provider": "weixin",
 								"scene": "WXSceneTimeline"
@@ -308,7 +308,7 @@
 						},
 						{
 							"img": "/static/app/sharemenu/weibo.png",
-							"text": this.$t('common.weibo'),
+							"text": "微博",
 							"share": {
 								"provider": "sinaweibo"
 							}
@@ -322,16 +322,16 @@
 						},
 						{
 							"img": "/static/app/sharemenu/copyurl.png",
-							"text": this.$t('common.copy'),
+							"text": "复制",
 							"share": "copyurl"
 						},
 						{
 							"img": "/static/app/sharemenu/more.png",
-							"text": this.$t('common.more'),
+							"text": "更多",
 							"share": "shareSystem"
 						}
 					],
-					cancelText: this.$t('common.cancelShare'),
+					cancelText: "取消分享",
 				}, e => { //callback
 					console.log(e);
 				})

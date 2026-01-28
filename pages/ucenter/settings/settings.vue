@@ -2,22 +2,21 @@
 	<view class="content">
 		<!-- 功能列表 -->
 		<uni-list class="mt10" :border="false">
-			<uni-list-item :title="$t('settings.userInfo')" to="/uni_modules/uni-id-pages/pages/userinfo/userinfo" link="navigateTo"></uni-list-item>
-			<uni-list-item v-if="userInfo.mobile" :title="$t('settings.changePassword')" :to="'/pages/ucenter/login-page/pwd-retrieve/pwd-retrieve?phoneNumber='+ userInfo.mobile" link="navigateTo"></uni-list-item>
+			<uni-list-item title="账号资料" to="/uni_modules/uni-id-pages/pages/userinfo/userinfo" link="navigateTo"></uni-list-item>
+			<uni-list-item v-if="userInfo.mobile" title="修改密码" :to="'/pages/ucenter/login-page/pwd-retrieve/pwd-retrieve?phoneNumber='+ userInfo.mobile" link="navigateTo"></uni-list-item>
 		</uni-list>
 		<uni-list class="mt10" :border="false">
     <!-- #ifdef APP-PLUS -->
     <!-- 检查push过程未结束不显示，push设置项 -->
-    <uni-list-item :title="$t('settings.clearTmp')" @click="clearTmp" link></uni-list-item>
-    <uni-list-item v-show="pushIsOn != 'wait'" :title="$t('settings.pushServer')" @click.native="pushIsOn?pushServer.off():pushServer.on()"  showSwitch :switchChecked="pushIsOn"></uni-list-item>
+    <uni-list-item title="清理缓存" @click="clearTmp" link></uni-list-item>
+    <uni-list-item v-show="pushIsOn != 'wait'" title="推送功能" @click.native="pushIsOn?pushServer.off():pushServer.on()"  showSwitch :switchChecked="pushIsOn"></uni-list-item>
     <!-- #endif -->
-    <uni-list-item v-if="i18nEnable" :title="$t('settings.changeLanguage')" @click="changeLanguage" :rightText="currentLanguage" link></uni-list-item>
 		</uni-list>
 
 		<!-- 退出/登录 按钮 -->
 		<view class="bottom-back" @click="changeLoginState">
-			<text class="bottom-back-text" v-if="hasLogin">{{$t('settings.logOut')}}</text>
-			<text class="bottom-back-text" v-else>{{$t('settings.login')}}</text>
+			<text class="bottom-back-text" v-if="hasLogin">退出登录</text>
+			<text class="bottom-back-text" v-else>登录</text>
 		</view>
 	</view>
 </template>
@@ -33,23 +32,17 @@
 			return {
 				pushServer:pushServer,
 				pushIsOn:"wait",
-				currentLanguage:"",
 				userInfo:{}
 			}
 		},
 		computed: {
 			hasLogin(){
 				return store.hasLogin
-			},
-			i18nEnable(){
-				return getApp().globalData.config.i18n.enable
 			}
 		},
 		onLoad() {
-			this.currentLanguage = uni.getStorageSync('CURRENT_LANG') == "en"?'English':'简体中文'
-
 			uni.setNavigationBarTitle({
-				title: this.$t('settings.navigationBarTitle')
+				title: "设置"
 			})
 		},
 		onShow() {
@@ -80,7 +73,7 @@
 								return resolve(res);
 							}
 							uni.showToast({
-								title: this.$t('settings.deviceNoOpen')+ `${title}`,
+								title: "设备未开启"+ `${title}`,
 								icon: 'none'
 							});
 							reject(res);
@@ -88,7 +81,7 @@
 						fail: (err) => {
 							console.log(err);
 							uni.showToast({
-								title: `${title}` + this.$t('settings.fail'),
+								title: `${title}` + "失败",
 								icon: 'none'
 							});
 							reject(err);
@@ -96,81 +89,46 @@
 					})
 				})
 			},
-			clearTmp() {
-				uni.showLoading({
-					title: this.$t('settings.clearing'),
-					mask: true
-				});
-				/*
-				任何临时存储或删除不直接影响程序运行逻辑（清除缓存必定造成业务逻辑的变化，如：打开页面的图片不从缓存中读取而从网络请求）的内容都可以视为缓存。主要有storage、和file写入。
-				缓存分为三部分
-					原生层（如：webview、x5播放器的、第三方sdk的、地图组件等）
-					前端框架（重启就会自动清除）
-					开发者自己的逻辑（如：
-						本示例的 检测更新功能下载了apk安装包，
-						其他逻辑需要根据开发者自己的业务设计
-						比如：有聊天功能的应用，聊天记录是否视为缓存，还是单独提供清除聊天记录的功能由开发者自己设计
-					）
-				*/
-				uni.getSavedFileList({
-					success:res=>{
-						if (res.fileList.length > 0) {
-							uni.removeSavedFile({
-								filePath: res.fileList[0].filePath,
-								complete:res=>{
-									console.log(res);
-									uni.hideLoading()
-									uni.showToast({
-										title: this.$t('settings.clearedSuccessed'),
-										icon: 'none'
-									});
-								}
+						clearTmp() {
+							uni.showLoading({
+								title: "清除中",
+								mask: true
 							});
-						}else{
-							uni.hideLoading()
-							uni.showToast({
-								title: this.$t('settings.clearedSuccessed'),
-								icon: 'none'
-							});
-						}
-					},
-					complete:e=>{
+							/*
+							任何临时存储或删除不直接影响程序运行逻辑（清除缓存必定造成业务逻辑的变化，如：打开页面的图片不从缓存中读取而从网络请求）的内容都可以视为缓存。主要有storage、和file写入。
+							缓存分为三部分
+								原生层（如：webview、x5播放器的、第三方sdk的、地图组件等）
+								前端框架（重启就会自动清除）
+								开发者自己的逻辑（如：
+									本示例的 检测更新功能下载了apk安装包，
+									其他逻辑需要根据开发者自己的业务设计
+									比如：有聊天功能的应用，聊天记录是否视为缓存，还是单独提供清除聊天记录的功能由开发者自己设计
+								）
+							*/
+							uni.getSavedFileList({
+								success:res=>{
+									if (res.fileList.length > 0) {
+										uni.removeSavedFile({
+											filePath: res.fileList[0].filePath,
+											complete:res=>{
+												console.log(res);
+												uni.hideLoading()
+												uni.showToast({
+													title: "清除成功",
+													icon: 'none'
+												});
+											}
+										});
+									}else{
+										uni.hideLoading()
+										uni.showToast({
+											title: "清除成功",
+											icon: 'none'
+										});
+									}
+								},					complete:e=>{
 						console.log(e);
 					}
-				});
-			},
-			changeLanguage(){
-				console.log('语言切换')
-				uni.showActionSheet({
-					itemList: ["English","简体中文"],
-					success: res => {
-						console.log(res.tapIndex);
-						let language = uni.getStorageSync('CURRENT_LANG')
-						if(
-							!res.tapIndex && language=='zh-Hans' || res.tapIndex && language=='en'
-						){
-							const globalData = getApp().globalData
-							if (language === 'en') {
-								language = globalData.locale = 'zh-Hans'
-							} else {
-								language = globalData.locale = 'en'
-							}
-							uni.setStorageSync('CURRENT_LANG', language)
-							getApp().globalData.$i18n.locale = language
-							this.currentLanguage = res.tapIndex?'简体中文':'English'
-							if(uni.setLocale){
-								uni.setLocale(language)
-							}
-							uni.reLaunch({
-								url: '/pages/list/list',
-								complete: () => {
-									uni.$emit("changeLanguage",language)
-								}
-							})
-						}
-					},
-					fail: () => {},
-					complete: () => {}
 				});
 			}
 		}
