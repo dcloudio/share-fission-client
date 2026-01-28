@@ -65,13 +65,13 @@
 				</view>
 
 				<view
-					v-for="(member, index) in teamList"
+					v-for="member in teamList"
 					:key="member.uid"
 					class="member-item"
 				>
 					<view class="member-info">
 						<cloud-image
-							v-if="member.avatarFile && member.avatarFile.url"
+							v-if="member.avatarFile?.url"
 							class="member-avatar"
 							:src="member.avatarFile.url"
 							width="80rpx"
@@ -102,7 +102,8 @@
 </template>
 
 <script>
-const db = uniCloud.database();
+const sfCo = uniCloud.importObject('share-fission-co', { customUI: true });
+const uniIdCo = uniCloud.importObject('uni-id-co', { customUI: true });
 
 export default {
 	data() {
@@ -123,7 +124,7 @@ export default {
 			],
 			currentLevel: 1,
 
-			// 收益数据（虚拟数据）
+			// 收益数据
 			statsData: {
 				points: 0,
 				level1Count: 0,
@@ -165,52 +166,34 @@ export default {
 			this.loadMoreStatus = 'loading'
 
 			try {
-				// 使用现有的云函数获取受邀用户
-				const res = await uniCloud.callFunction({
-					name: 'uni-id-co',
-					data: {
-						action: 'getInvitedUser',
-						params: {
-							level: this.currentLevel,
-							limit: this.limit,
-							offset: this.offset,
-							needTotal: true
-						}
-					}
+				// 使用云对象获取受邀用户
+				const res = await uniIdCo.getInvitedUser({
+					level: this.currentLevel,
+					limit: this.limit,
+					offset: this.offset,
+					needTotal: true
 				})
 
-				if (res.result.errCode === 0) {
-					const newList = res.result.invitedUser || []
-
-					if (this.offset === 0) {
-						this.teamList = newList
-					} else {
-						this.teamList = [...this.teamList, ...newList]
-					}
-
-					// 更新总数
-					if (this.currentLevel === 1) {
-						this.level1Total = res.result.total || 0
-					} else {
-						this.level2Total = res.result.total || 0
-					}
-					this.totalCount = this.level1Total + this.level2Total
-
-					// 更新加载状态
-					if (newList.length < this.limit) {
-						this.loadMoreStatus = 'noMore'
-					} else {
-						this.loadMoreStatus = 'more'
-					}
-				} else {
+				if (res.errCode !== 0) {
 					uni.showToast({
-						title: res.result.errMsg || '加载失败',
+						title: res.errMsg || '加载失败',
 						icon: 'none'
 					})
 					this.loadMoreStatus = 'noMore'
+					return
 				}
+
+				const newList = res.invitedUser || []
+
+				if (this.offset === 0) {
+					this.teamList = newList
+				} else {
+					this.teamList = [...this.teamList, ...newList]
+				}
+
+				// 更新加载状态
+				this.loadMoreStatus = newList.length < this.limit ? 'noMore' : 'more'
 			} catch (error) {
-				console.error('加载团队数据失败:', error)
 				uni.showToast({
 					title: '加载失败',
 					icon: 'none'
@@ -222,85 +205,43 @@ export default {
 		},
 
 		/**
-		 * 加载收益数据（虚拟数据）
+		 * 加载收益数据
 		 */
 		async loadStatsData() {
 			try {
-				// 获取一级和二级用户总数
-				const level1Res = await uniCloud.callFunction({
-					name: 'uni-id-co',
+				const res = await sfCo.action({
+					name: 'client/user/getTeamStats',
 					data: {
-						action: 'getInvitedUser',
-						params: {
-							level: 1,
-							limit: 1,
-							offset: 0,
-							needTotal: true
-						}
+						timeRange: this.currentTimeFilter
 					}
 				})
 
-				const level2Res = await uniCloud.callFunction({
-					name: 'uni-id-co',
-					data: {
-						action: 'getInvitedUser',
-						params: {
-							level: 2,
-							limit: 1,
-							offset: 0,
-							needTotal: true
-						}
-					}
-				})
-
-				let level1Total = 0
-				let level2Total = 0
-
-				if (level1Res.result.errCode === 0) {
-					level1Total = level1Res.result.total || 0
-					this.level1Total = level1Total
+				if (res?.errCode && res.errCode !== 0) {
+					uni.showToast({
+						title: res.errMsg || '加载失败',
+						icon: 'none'
+					})
+					return
 				}
 
-				if (level2Res.result.errCode === 0) {
-					level2Total = level2Res.result.total || 0
-					this.level2Total = level2Total
+				const result = res?.data || res || {}
+
+				// 更新数量
+				this.level1Total = Number(result.level1_count || 0)
+				this.level2Total = Number(result.level2_count || 0)
+				this.totalCount = this.level1Total + this.level2Total
+
+				// 更新收益数据
+				this.statsData = {
+					points: Number(result.total_income || 0),
+					level1Count: this.level1Total,
+					level2Count: this.level2Total
 				}
-
-				this.totalCount = level1Total + level2Total
-
-				// 虚拟收益数据（基于时间筛选）
-				this.calculateStats(level1Total, level2Total)
 			} catch (error) {
-				console.error('加载收益数据失败:', error)
-			}
-		},
-
-		/**
-		 * 计算虚拟收益数据
-		 */
-		calculateStats(level1Total, level2Total) {
-			// 根据时间筛选计算虚拟数据
-			let ratio = 1
-			switch (this.currentTimeFilter) {
-				case 'today':
-					ratio = 0.05 // 假设今日新增占总数的5%
-					break
-				case 'yesterday':
-					ratio = 0.08
-					break
-				case 'week':
-					ratio = 0.3
-					break
-				case 'all':
-					ratio = 1
-					break
-			}
-
-			this.statsData = {
-				// 虚拟积分：一级用户贡献10积分，二级用户贡献5积分
-				points: Math.floor((level1Total * 10 + level2Total * 5) * ratio),
-				level1Count: Math.floor(level1Total * ratio),
-				level2Count: Math.floor(level2Total * ratio)
+				uni.showToast({
+					title: error.message || '加载收益数据失败',
+					icon: 'none'
+				})
 			}
 		},
 
@@ -309,7 +250,7 @@ export default {
 		 */
 		changeTimeFilter(value) {
 			this.currentTimeFilter = value
-			this.calculateStats(this.level1Total, this.level2Total)
+			this.loadStatsData()
 		},
 
 		/**
@@ -399,7 +340,7 @@ view {
 }
 
 .stats-title {
-	font-size: 36rpx;
+	font-size: 18px;
 	font-weight: bold;
 	color: #FFFFFF;
 }
@@ -427,7 +368,7 @@ view {
 }
 
 .filter-text {
-	font-size: 28rpx;
+	font-size: 14px;
 	color: rgba(255, 255, 255, 0.8);
 }
 
@@ -459,13 +400,13 @@ view {
 }
 
 .stat-label {
-	font-size: 24rpx;
+	font-size: 12px;
 	color: rgba(255, 255, 255, 0.9);
 	margin-bottom: 12rpx;
 }
 
 .stat-value {
-	font-size: 40rpx;
+	font-size: 20px;
 	font-weight: bold;
 	color: #FFFFFF;
 }
@@ -492,13 +433,13 @@ view {
 }
 
 .team-title {
-	font-size: 32rpx;
+	font-size: 16px;
 	font-weight: bold;
 	color: #333333;
 }
 
 .team-count {
-	font-size: 28rpx;
+	font-size: 14px;
 	color: #999999;
 }
 
@@ -525,7 +466,7 @@ view {
 }
 
 .tab-text {
-	font-size: 28rpx;
+	font-size: 14px;
 	color: #666666;
 	margin-right: 8rpx;
 }
@@ -536,7 +477,7 @@ view {
 }
 
 .tab-count {
-	font-size: 24rpx;
+	font-size: 12px;
 	color: #999999;
 	background: #f0f0f0;
 	padding: 4rpx 12rpx;
@@ -560,7 +501,7 @@ view {
 }
 
 .empty-text {
-	font-size: 28rpx;
+	font-size: 14px;
 	color: #999999;
 	margin-top: 20rpx;
 }
@@ -602,14 +543,14 @@ view {
 }
 
 .member-name {
-	font-size: 30rpx;
+	font-size: 15px;
 	color: #333333;
 	font-weight: 500;
 	margin-bottom: 8rpx;
 }
 
 .member-time {
-	font-size: 24rpx;
+	font-size: 12px;
 	color: #999999;
 }
 
@@ -620,7 +561,7 @@ view {
 }
 
 .tag-text {
-	font-size: 24rpx;
+	font-size: 12px;
 	color: #FFFFFF;
 }
 
