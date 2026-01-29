@@ -90,6 +90,7 @@
 
 <script>
 const db = uniCloud.database();
+const sfCo = uniCloud.importObject('share-fission-co', { customUI: true });
 
 export default {
 	data() {
@@ -106,17 +107,21 @@ export default {
 				images: [],
 				detail: ''
 			},
-			userPoints: 0
+			userPoints: 0,
+			exchanging: false
 		}
 	},
 	computed: {
 		// 是否可以兑换
 		canExchange() {
-			return this.userPoints >= this.product.points && this.product.stock > 0
+			return this.userPoints >= this.product.points && this.product.stock > 0 && !this.exchanging
 		},
 
 		// 兑换按钮文本
 		exchangeBtnText() {
+			if (this.exchanging) {
+				return '兑换中...'
+			}
 			if (this.product.stock <= 0) {
 				return '已售罄'
 			}
@@ -135,14 +140,38 @@ export default {
 		/**
 		 * 加载商品详情
 		 */
-		loadProductDetail() {
+		async loadProductDetail() {
 			try {
+				// 优先从缓存读取
 				const products = uni.getStorageSync('mall_products') || []
-				const product = products.find(p => p.id === this.productId)
+				const cachedProduct = products.find(p => p.id === this.productId)
 
-				if (product) {
-					this.product = product
-				} else {
+				if (cachedProduct) {
+					this.product = cachedProduct
+				}
+
+				// 从后端获取最新数据
+				const res = await sfCo.action({
+					name: 'client/goods/getById',
+					data: {
+						_id: this.productId
+					}
+				})
+
+				if (res && !res.errCode) {
+					const g = res
+					this.product = {
+						id: String(g._id || ''),
+						name: String(g.name || ''),
+						desc: String(g.description || ''),
+						points: Number(g.score_cost || 0),
+						stock: Number(g.stock || 0),
+						soldCount: Number(g.sales_count || 0),
+						image: (g.images && g.images.length > 0) ? String(g.images[0]) : '',
+						images: (g.images && g.images.length > 0) ? g.images : [],
+						detail: String(g.detail || '')
+					}
+				} else if (!cachedProduct) {
 					uni.showToast({
 						title: '商品不存在',
 						icon: 'none'
@@ -153,10 +182,13 @@ export default {
 				}
 			} catch (error) {
 				console.error('加载商品详情失败:', error)
-				uni.showToast({
-					title: '加载失败',
-					icon: 'none'
-				})
+				// 如果后端获取失败但有缓存，继续使用缓存
+				if (!this.product.id) {
+					uni.showToast({
+						title: '加载失败',
+						icon: 'none'
+					})
+				}
 			}
 		},
 
@@ -177,7 +209,7 @@ export default {
 				}
 			} catch (error) {
 				console.error('获取积分失败:', error)
-				this.userPoints = 5000
+				this.userPoints = 0
 			}
 		},
 
@@ -201,88 +233,60 @@ export default {
 		},
 
 		/**
-		 * 处理兑换（虚拟数据）
+		 * 处理兑换
 		 */
-		processExchange() {
+		async processExchange() {
+			if (this.exchanging) return
+			this.exchanging = true
+
 			uni.showLoading({
 				title: '兑换中...',
 				mask: true
 			})
 
-			// 模拟兑换延迟
-			setTimeout(() => {
-				// 生成虚拟卡密
-				const cardNumber = this.generateCardNumber()
-
-				// 创建订单
-				const order = {
-					id: 'EO' + Date.now(),
-					productId: this.product.id,
-					productName: this.product.name,
-					productImage: this.product.image,
-					points: this.product.points,
-					cardNumber: cardNumber,
-					status: 'success', // success: 兑换成功, pending: 处理中, failed: 兑换失败
-					createTime: Date.now()
-				}
-
-				// 保存订单到本地存储
-				try {
-					let orders = uni.getStorageSync('exchange_orders') || []
-					orders.unshift(order)
-					uni.setStorageSync('exchange_orders', orders)
-
-					// 更新用户积分（虚拟）
-					this.userPoints -= this.product.points
-
-					// 更新商品库存
-					this.product.stock -= 1
-					this.product.soldCount += 1
-
-					// 更新本地存储的商品数据
-					let products = uni.getStorageSync('mall_products') || []
-					const index = products.findIndex(p => p.id === this.productId)
-					if (index !== -1) {
-						products[index] = this.product
-						uni.setStorageSync('mall_products', products)
+			try {
+				const result = await sfCo.action({
+					name: 'client/orders/create',
+					data: {
+						goods_id: this.productId
 					}
+				})
 
-					uni.hideLoading()
+				uni.hideLoading()
 
-					uni.showModal({
-						title: '兑换成功',
-						content: '请在兑换记录中查看卡密',
-						showCancel: false,
-						success: () => {
-							uni.navigateTo({
-								url: '/pages/ucenter/exchange-order/exchange-order'
-							})
-						}
-					})
-				} catch (error) {
-					uni.hideLoading()
-					console.error('兑换失败:', error)
+				if (result?.errCode && result.errCode !== 0) {
 					uni.showToast({
-						title: '兑换失败，请重试',
+						title: result.errMsg || '兑换失败',
 						icon: 'none'
 					})
+					return
 				}
-			}, 1500)
-		},
 
-		/**
-		 * 生成虚拟卡密
-		 */
-		generateCardNumber() {
-			const chars = 'ABCDEFGHJKLMNPQRSTUVWXYZ23456789'
-			let cardNumber = ''
-			for (let i = 0; i < 16; i++) {
-				if (i > 0 && i % 4 === 0) {
-					cardNumber += '-'
-				}
-				cardNumber += chars.charAt(Math.floor(Math.random() * chars.length))
+				// 更新本地积分和库存
+				this.userPoints -= this.product.points
+				this.product.stock -= 1
+				this.product.soldCount += 1
+
+				uni.showModal({
+					title: '兑换成功',
+					content: '请在兑换记录中查看卡密',
+					showCancel: false,
+					success: () => {
+						uni.navigateTo({
+							url: '/pages/ucenter/exchange-order/exchange-order'
+						})
+					}
+				})
+			} catch (error) {
+				uni.hideLoading()
+				console.error('兑换失败:', error)
+				uni.showToast({
+					title: error.message || '兑换失败，请重试',
+					icon: 'none'
+				})
+			} finally {
+				this.exchanging = false
 			}
-			return cardNumber
 		}
 	}
 }

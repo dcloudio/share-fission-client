@@ -159,18 +159,24 @@ export default {
 
 				if (result?.list) {
 					// 转换后端数据结构为前端格式
-					this.orders = result.list.map(order => ({
+					const orders = result.list.map(order => ({
 						id: order.order_no || order._id,
+						orderId: order._id,
 						productId: order.goods_info?.goods_id || '',
 						productName: order.goods_info?.name || '未知商品',
 						productImage: order.goods_info?.image || '',
 						points: order.score_cost || 0,
-						cardNumber: order.card_key_info?.card_no || '',
-						cardPwd: order.card_key_info?.card_pwd || '',
-						exchangeUrl: order.card_key_info?.exchange_url || '',
+						cardNumber: '',
+						cardPwd: '',
+						exchangeUrl: '',
 						status: STATUS_MAP[order.status] || 'success',
 						createTime: order.create_time || Date.now()
 					}))
+
+					this.orders = orders
+
+					// 为已完成的订单获取卡密信息
+					this.loadCardKeys(orders)
 				} else {
 					this.orders = []
 				}
@@ -184,6 +190,37 @@ export default {
 			} finally {
 				this.loading = false
 			}
+		},
+
+		/**
+		 * 批量获取订单卡密信息
+		 */
+		async loadCardKeys(orders) {
+			const completeOrders = orders.filter(o => o.status === 'success' && o.orderId)
+			if (completeOrders.length === 0) return
+
+			// 并发获取卡密信息
+			const promises = completeOrders.map(order =>
+				sfCo.action({
+					name: 'client/orders/getCardKey',
+					data: { order_id: order.orderId }
+				}).catch(() => null)
+			)
+
+			const results = await Promise.all(promises)
+
+			// 更新订单卡密信息
+			results.forEach((cardKey, index) => {
+				if (cardKey && !cardKey.errCode) {
+					const order = completeOrders[index]
+					const orderIndex = this.orders.findIndex(o => o.orderId === order.orderId)
+					if (orderIndex !== -1) {
+						this.orders[orderIndex].cardNumber = cardKey.card_no || ''
+						this.orders[orderIndex].cardPwd = cardKey.card_pwd || ''
+						this.orders[orderIndex].exchangeUrl = cardKey.exchange_url || ''
+					}
+				}
+			})
 		},
 
 		/**
