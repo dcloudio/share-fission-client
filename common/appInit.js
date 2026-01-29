@@ -71,8 +71,8 @@ export default async function() {
 								callBack()
 							}
 						},
-						fail() {
-							console.log('error--');
+						fail(e) {
+							console.log('error--',e);
 							callBack()
 						},
 						complete() {
