@@ -46,12 +46,22 @@
 				</view>
 
 				<!-- 卡密信息 -->
-				<view v-if="order.status === 'success'" class="card-info">
+				<view v-if="order.status === 'success' && order.cardNumber" class="card-info">
 					<view class="info-row">
-						<text class="info-label">兑换卡密</text>
+						<text class="info-label">兑换卡号</text>
 						<view class="card-number-wrapper">
 							<text class="card-number">{{ order.cardNumber }}</text>
 							<view class="copy-btn" @click="copyCardNumber(order.cardNumber)">
+								<uni-icons type="copy" size="14" color="#007AFF"></uni-icons>
+								<text class="copy-text">复制</text>
+							</view>
+						</view>
+					</view>
+					<view v-if="order.cardPwd" class="info-row">
+						<text class="info-label">兑换卡密</text>
+						<view class="card-number-wrapper">
+							<text class="card-number">{{ order.cardPwd }}</text>
+							<view class="copy-btn" @click="copyCardNumber(order.cardPwd)">
 								<uni-icons type="copy" size="14" color="#007AFF"></uni-icons>
 								<text class="copy-text">复制</text>
 							</view>
@@ -67,10 +77,10 @@
 					</view>
 				</view>
 
-				<!-- 处理中/失败提示 -->
-				<view v-if="order.status === 'pending'" class="order-tip pending">
-					<uni-icons type="spinner-cycle" size="16" color="#FF9500"></uni-icons>
-					<text class="tip-text">订单处理中，请稍后查看</text>
+				<!-- 无卡密的成功订单 -->
+				<view v-else-if="order.status === 'success'" class="order-tip success">
+					<uni-icons type="checkmarkempty" size="16" color="#34C759"></uni-icons>
+					<text class="tip-text">兑换成功</text>
 				</view>
 
 				<view v-if="order.status === 'failed'" class="order-tip failed">
@@ -88,6 +98,14 @@
 </template>
 
 <script>
+const sfCo = uniCloud.importObject('share-fission-co', { customUI: true });
+
+// 状态映射：后端状态 -> 前端状态
+const STATUS_MAP = {
+	'complete': 'success',  // 已完成 -> 兑换成功
+	'cancel': 'failed'      // 已取消 -> 兑换失败
+};
+
 export default {
 	data() {
 		return {
@@ -95,13 +113,13 @@ export default {
 			statusTabs: [
 				{ label: '全部', value: 'all' },
 				{ label: '兑换成功', value: 'success' },
-				{ label: '处理中', value: 'pending' },
 				{ label: '兑换失败', value: 'failed' }
 			],
 			currentStatus: 'all',
 
 			// 订单列表
-			orders: []
+			orders: [],
+			loading: false
 		}
 	},
 	computed: {
@@ -124,57 +142,48 @@ export default {
 		/**
 		 * 加载订单列表
 		 */
-		loadOrders() {
-			try {
-				const orders = uni.getStorageSync('exchange_orders') || []
-				this.orders = orders
+		async loadOrders() {
+			if (this.loading) return
+			this.loading = true
 
-				// 如果没有订单，添加虚拟数据供演示
-				if (this.orders.length === 0) {
-					this.orders = this.generateMockOrders()
+			try {
+				const result = await sfCo.action({
+					name: 'client/orders/getList',
+					data: {
+						pageIndex: 1,
+						pageSize: 100,
+						sortField: 'create_time',
+						sortOrder: 'desc'
+					}
+				})
+
+				if (result?.list) {
+					// 转换后端数据结构为前端格式
+					this.orders = result.list.map(order => ({
+						id: order.order_no || order._id,
+						productId: order.goods_info?.goods_id || '',
+						productName: order.goods_info?.name || '未知商品',
+						productImage: order.goods_info?.image || '',
+						points: order.score_cost || 0,
+						cardNumber: order.card_key_info?.card_no || '',
+						cardPwd: order.card_key_info?.card_pwd || '',
+						exchangeUrl: order.card_key_info?.exchange_url || '',
+						status: STATUS_MAP[order.status] || 'success',
+						createTime: order.create_time || Date.now()
+					}))
+				} else {
+					this.orders = []
 				}
 			} catch (error) {
 				console.error('加载订单失败:', error)
-				this.orders = this.generateMockOrders()
+				uni.showToast({
+					title: '加载失败',
+					icon: 'none'
+				})
+				this.orders = []
+			} finally {
+				this.loading = false
 			}
-		},
-
-		/**
-		 * 生成虚拟订单数据
-		 */
-		generateMockOrders() {
-			const now = Date.now()
-			return [
-				{
-					id: 'EO' + (now - 86400000 * 5),
-					productId: 'P001',
-					productName: '爱奇艺会员月卡',
-					productImage: 'https://via.placeholder.com/300x300/667eea/ffffff?text=爱奇艺',
-					points: 1500,
-					cardNumber: 'AQYK-2H8F-9NMT-K7PL',
-					status: 'success',
-					createTime: now - 86400000 * 5
-				},
-				{
-					id: 'EO' + (now - 86400000 * 2),
-					productId: 'P003',
-					productName: '王者荣耀点券',
-					productImage: 'https://via.placeholder.com/300x300/feca57/333333?text=王者荣耀',
-					points: 1000,
-					cardNumber: 'WZRY-3K9L-6HJM-N4RT',
-					status: 'success',
-					createTime: now - 86400000 * 2
-				},
-				{
-					id: 'EO' + (now - 3600000),
-					productId: 'P005',
-					productName: '10元话费充值',
-					productImage: 'https://via.placeholder.com/300x300/48dbfb/ffffff?text=话费',
-					points: 1000,
-					status: 'pending',
-					createTime: now - 3600000
-				}
-			]
 		},
 
 		/**
@@ -197,7 +206,6 @@ export default {
 		getStatusText(status) {
 			const statusMap = {
 				success: '兑换成功',
-				pending: '处理中',
 				failed: '兑换失败'
 			}
 			return statusMap[status] || '未知'
@@ -228,6 +236,7 @@ export default {
 		 * 格式化时间
 		 */
 		formatTime(timestamp) {
+			if (!timestamp) return ''
 			const date = new Date(timestamp)
 			const year = date.getFullYear()
 			const month = String(date.getMonth() + 1).padStart(2, '0')
@@ -478,12 +487,12 @@ view {
 	margin-bottom: 16rpx;
 }
 
-.order-tip.pending {
-	background: rgba(255, 149, 0, 0.1);
+.order-tip.success {
+	background: rgba(52, 199, 89, 0.1);
 }
 
-.order-tip.pending .tip-text {
-	color: #FF9500;
+.order-tip.success .tip-text {
+	color: #34C759;
 }
 
 .order-tip.failed {
