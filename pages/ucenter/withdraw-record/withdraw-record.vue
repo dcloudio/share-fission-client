@@ -55,25 +55,25 @@
 				<view class="record-content">
 					<view class="content-row">
 						<text class="content-label">提现积分</text>
-						<text class="content-value">{{ record.amount }} 积分</text>
+						<text class="content-value">{{ record.score }} 积分</text>
 					</view>
 					<view class="content-row">
 						<text class="content-label">兑换金额</text>
-						<text class="content-value">¥{{ record.exchangeAmount.toFixed(2) }}</text>
+						<text class="content-value">¥{{ record.amount.toFixed(2) }}</text>
 					</view>
 					<view class="content-row">
 						<text class="content-label">手续费</text>
-						<text class="content-value fee">-¥{{ record.feeAmount.toFixed(2) }}</text>
+						<text class="content-value fee">-¥{{ record.fee.toFixed(2) }}</text>
 					</view>
 					<view class="content-row highlight-row">
 						<text class="content-label">实际到账</text>
-						<text class="content-value amount">¥{{ record.actualAmount.toFixed(2) }}</text>
+						<text class="content-value amount">¥{{ record.actual_amount.toFixed(2) }}</text>
 					</view>
 				</view>
 
 				<view class="record-footer">
-					<text class="footer-time">{{ formatTime(record.createTime) }}</text>
-					<text class="footer-id">订单号：{{ record.id }}</text>
+					<text class="footer-time">{{ formatTime(record.create_time) }}</text>
+					<text class="footer-id">订单号：{{ record._id.slice(-8) }}</text>
 				</view>
 			</view>
 		</view>
@@ -81,6 +81,16 @@
 </template>
 
 <script>
+const sfCo = uniCloud.importObject('share-fission-co', { customUI: true });
+
+// 状态映射：后端数字状态 -> 前端字符串状态
+const STATUS_MAP = {
+	0: 'pending',    // 待审核
+	1: 'approved',   // 审核通过
+	2: 'rejected',   // 审核拒绝
+	3: 'completed'   // 已打款/已完成
+};
+
 export default {
 	data() {
 		return {
@@ -94,7 +104,8 @@ export default {
 			currentStatus: 'all',
 
 			// 提现记录
-			records: []
+			records: [],
+			loading: false
 		}
 	},
 	computed: {
@@ -103,19 +114,22 @@ export default {
 			if (this.currentStatus === 'all') {
 				return this.records
 			}
-			return this.records.filter(record => record.status === this.currentStatus)
+			return this.records.filter(record => {
+				const statusStr = STATUS_MAP[record.status] || 'pending'
+				return statusStr === this.currentStatus
+			})
 		},
 
-		// 累计提现金额
+		// 累计提现金额（已打款的）
 		totalAmount() {
 			return this.records
-				.filter(record => record.status === 'completed')
-				.reduce((sum, record) => sum + record.actualAmount, 0)
+				.filter(record => record.status === 3) // 3 = 已打款
+				.reduce((sum, record) => sum + (record.actual_amount || 0), 0)
 		},
 
 		// 待审核数量
 		pendingCount() {
-			return this.records.filter(record => record.status === 'pending').length
+			return this.records.filter(record => record.status === 0).length
 		}
 	},
 	onLoad() {
@@ -129,72 +143,32 @@ export default {
 		/**
 		 * 加载提现记录
 		 */
-		loadRecords() {
-			try {
-				// 从本地存储读取（实际项目中应该从云端获取）
-				const records = uni.getStorageSync('withdraw_records') || []
-				this.records = records
+		async loadRecords() {
+			if (this.loading) return
+			this.loading = true
 
-				// 如果没有记录，添加一些虚拟数据供演示
-				if (this.records.length === 0) {
-					this.records = this.generateMockRecords()
+			try {
+				const result = await sfCo.action({
+					name: 'client/withdrawal/getList',
+					data: {
+						pageIndex: 1,
+						pageSize: 100,
+						sortField: 'create_time',
+						sortOrder: 'desc'
+					}
+				})
+
+				if (result?.list) {
+					this.records = result.list
+				} else {
+					this.records = []
 				}
 			} catch (error) {
 				console.error('加载提现记录失败:', error)
-				this.records = this.generateMockRecords()
+				this.records = []
+			} finally {
+				this.loading = false
 			}
-		},
-
-		/**
-		 * 生成虚拟数据
-		 */
-		generateMockRecords() {
-			const now = Date.now()
-			return [
-				{
-					id: 'WD' + (now - 86400000 * 7),
-					amount: 1000,
-					exchangeAmount: 10,
-					feeAmount: 0.1,
-					actualAmount: 9.9,
-					method: 'alipay',
-					methodInfo: {
-						account: '138****8888',
-						name: '张三'
-					},
-					status: 'completed',
-					createTime: now - 86400000 * 7
-				},
-				{
-					id: 'WD' + (now - 86400000 * 3),
-					amount: 500,
-					exchangeAmount: 5,
-					feeAmount: 0.05,
-					actualAmount: 4.95,
-					method: 'bank',
-					methodInfo: {
-						name: '张三',
-						cardNumber: '6222****1234',
-						bankName: '中国工商银行'
-					},
-					status: 'pending',
-					createTime: now - 86400000 * 3
-				},
-				{
-					id: 'WD' + (now - 86400000 * 15),
-					amount: 200,
-					exchangeAmount: 2,
-					feeAmount: 0.02,
-					actualAmount: 1.98,
-					method: 'alipay',
-					methodInfo: {
-						account: '138****8888',
-						name: '张三'
-					},
-					status: 'rejected',
-					createTime: now - 86400000 * 15
-				}
-			]
 		},
 
 		/**
@@ -208,26 +182,27 @@ export default {
 		 * 获取状态样式类
 		 */
 		getStatusClass(status) {
-			return status
+			return STATUS_MAP[status] || 'pending'
 		},
 
 		/**
 		 * 获取状态文本
 		 */
 		getStatusText(status) {
-			const statusMap = {
-				pending: '待审核',
-				approved: '已通过',
-				rejected: '已拒绝',
-				completed: '已完成'
+			const statusTextMap = {
+				0: '待审核',
+				1: '已通过',
+				2: '已拒绝',
+				3: '已完成'
 			}
-			return statusMap[status] || '未知'
+			return statusTextMap[status] || '未知'
 		},
 
 		/**
 		 * 格式化时间
 		 */
 		formatTime(timestamp) {
+			if (!timestamp) return ''
 			const date = new Date(timestamp)
 			const year = date.getFullYear()
 			const month = String(date.getMonth() + 1).padStart(2, '0')

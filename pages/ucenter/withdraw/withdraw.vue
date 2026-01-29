@@ -155,17 +155,18 @@
 
 <script>
 const db = uniCloud.database();
+const sfCo = uniCloud.importObject('share-fission-co', { customUI: true });
 
 export default {
 	data() {
 		return {
-			// 可提现积分（虚拟数据，实际应该从云端获取）
-			availablePoints: 5000,
+			// 可提现积分
+			availablePoints: 0,
 
-			// 提现规则
-			pointsRate: 0.01, // 积分兑换比例：100积分=1元
-			feeRate: 0.01, // 手续费比例：1%
-			minWithdraw: 100, // 最低提现积分
+			// 提现规则（从系统配置加载）
+			pointsRate: 0.001, // 积分兑换比例：1000积分=1元
+			feeRate: 0.2, // 手续费比例：20%
+			minWithdraw: 1000, // 最低提现积分
 
 			// 提现方式
 			withdrawMethods: [
@@ -188,7 +189,10 @@ export default {
 			},
 
 			// 提现金额
-			withdrawAmount: ''
+			withdrawAmount: '',
+
+			// 提交中状态
+			submitting: false
 		}
 	},
 	computed: {
@@ -209,6 +213,9 @@ export default {
 
 		// 是否可提交
 		canSubmit() {
+			if (this.submitting) {
+				return false
+			}
 			if (!this.withdrawAmount || this.withdrawAmount < this.minWithdraw) {
 				return false
 			}
@@ -226,29 +233,55 @@ export default {
 		}
 	},
 	onLoad() {
+		this.loadSystemConfig()
 		this.loadUserPoints()
 	},
 	methods: {
 		/**
-		 * 加载用户积分（实际项目中应该调用云函数）
+		 * 加载系统配置
+		 */
+		async loadSystemConfig() {
+			try {
+				const config = await sfCo.action({
+					name: 'client/config/get',
+					data: {}
+				})
+				if (config) {
+					// 积分兑换比例：ad_score_rate 表示 1元=多少积分，如 1000
+					if (config.ad_score_rate) {
+						this.pointsRate = 1 / config.ad_score_rate
+					}
+					// 手续费比例
+					if (config.withdrawal_fee_rate !== undefined) {
+						this.feeRate = config.withdrawal_fee_rate
+					}
+					// 最低提现积分
+					if (config.withdrawal_min_score !== undefined) {
+						this.minWithdraw = config.withdrawal_min_score
+					}
+				}
+			} catch (error) {
+				console.error('获取系统配置失败:', error)
+			}
+		},
+
+		/**
+		 * 加载用户积分
 		 */
 		async loadUserPoints() {
 			try {
-				// 尝试从云端获取积分
-				const res = await db.collection("uni-id-scores")
-					.where('"user_id" == $env.uid')
-					.field('score,balance')
-					.orderBy("create_date", "desc")
+				const res = await db.collection("uni-id-users")
+					.where('"_id" == $env.uid')
+					.field('score')
 					.limit(1)
 					.get()
 
-				if (res.result.data && res.result.data.length > 0) {
-					this.availablePoints = res.result.data[0].balance || 0
+				if (res.result.data?.length > 0) {
+					this.availablePoints = res.result.data[0].score || 0
 				}
 			} catch (error) {
 				console.error('获取积分失败:', error)
-				// 如果获取失败，使用虚拟数据
-				this.availablePoints = 5000
+				this.availablePoints = 0
 			}
 		},
 
@@ -304,39 +337,50 @@ export default {
 		},
 
 		/**
-		 * 处理提现（虚拟数据，实际应该调用云函数）
+		 * 处理提现
 		 */
 		async processWithdraw() {
+			if (this.submitting) return
+			this.submitting = true
+
 			uni.showLoading({
 				title: '提交中...',
 				mask: true
 			})
 
-			// 模拟提交延迟
-			setTimeout(() => {
-				uni.hideLoading()
-
-				// 虚拟提现记录（实际应该存储到云端）
-				const withdrawRecord = {
-					id: 'WD' + Date.now(),
-					amount: this.withdrawAmount,
-					exchangeAmount: this.exchangeAmount,
-					feeAmount: this.feeAmount,
-					actualAmount: this.actualAmount,
-					method: this.selectedMethod,
-					methodInfo: this.selectedMethod === 'bank' ? this.bankInfo : this.alipayInfo,
-					status: 'pending', // pending: 待审核, approved: 已通过, rejected: 已拒绝, completed: 已完成
-					createTime: Date.now()
+			try {
+				// 构建账户信息
+				let account_info = {}
+				if (this.selectedMethod === 'alipay') {
+					account_info = {
+						account: this.alipayInfo.account,
+						name: this.alipayInfo.name
+					}
+				} else if (this.selectedMethod === 'bank') {
+					account_info = {
+						account: this.bankInfo.cardNumber,
+						name: this.bankInfo.name,
+						bank_name: this.bankInfo.bankName
+					}
 				}
 
-				// 保存到本地存储
-				try {
-					let records = uni.getStorageSync('withdraw_records') || []
-					records.unshift(withdrawRecord)
-					uni.setStorageSync('withdraw_records', records)
+				// 调用云函数提交提现申请
+				const result = await sfCo.action({
+					name: 'client/withdrawal/apply',
+					data: {
+						score: this.withdrawAmount,
+						method: this.selectedMethod,
+						account_info
+					}
+				})
 
-					// 更新可用积分（虚拟）
+				uni.hideLoading()
+
+				if (result?.id) {
+					// 更新可用积分
 					this.availablePoints -= this.withdrawAmount
+					// 清空提现金额
+					this.withdrawAmount = ''
 
 					uni.showToast({
 						title: '提现申请已提交',
@@ -350,14 +394,22 @@ export default {
 							url: '/pages/ucenter/withdraw-record/withdraw-record'
 						})
 					}, 2000)
-				} catch (error) {
-					console.error('保存提现记录失败:', error)
+				} else {
 					uni.showToast({
 						title: '提交失败，请重试',
 						icon: 'none'
 					})
 				}
-			}, 1500)
+			} catch (error) {
+				uni.hideLoading()
+				console.error('提现申请失败:', error)
+				uni.showToast({
+					title: error.message || '提交失败，请重试',
+					icon: 'none'
+				})
+			} finally {
+				this.submitting = false
+			}
 		},
 
 		/**
