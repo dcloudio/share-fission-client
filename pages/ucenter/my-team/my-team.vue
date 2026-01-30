@@ -2,6 +2,9 @@
 	<view class="my-team">
 		<!-- 收益统计 -->
 		<view class="stats-container">
+      <!-- #ifndef H5 -->
+      <statusBar></statusBar>
+      <!-- #endif -->
 			<view class="stats-header">
 				<text class="stats-title">我的收益</text>
 			</view>
@@ -102,10 +105,14 @@
 </template>
 
 <script>
+import statusBar from "@/uni_modules/uni-nav-bar/components/uni-nav-bar/uni-status-bar";
 const sfCo = uniCloud.importObject('share-fission-co', { customUI: true });
 const uniIdCo = uniCloud.importObject('uni-id-co', { customUI: true });
 
 export default {
+	components: {
+		statusBar
+	},
 	data() {
 		return {
 			// 时间筛选

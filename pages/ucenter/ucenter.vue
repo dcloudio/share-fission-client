@@ -1,5 +1,8 @@
 <template>
 	<view class="ucenter">
+		<!-- #ifndef H5 -->
+		<statusBar></statusBar>
+		<!-- #endif -->
 		<uni-sign-in ref="signIn"></uni-sign-in>
 
 		<!-- 用户信息卡片 -->
@@ -104,6 +107,7 @@
 </template>
 
 <script>
+	import statusBar from "@/uni_modules/uni-nav-bar/components/uni-nav-bar/uni-status-bar";
 	import checkUpdate from '@/uni_modules/uni-upgrade-center-app/utils/check-update';
 	import callCheckVersion from '@/uni_modules/uni-upgrade-center-app/utils/call-check-version';
 	// #ifdef APP
@@ -116,6 +120,9 @@
 		mutations
 	} from '@/uni_modules/uni-id-pages/common/store.js'
 	export default {
+		components: {
+			statusBar
+		},
 		// #ifdef APP
 		onBackPress({from}) {
 			if(from=='backbutton'){

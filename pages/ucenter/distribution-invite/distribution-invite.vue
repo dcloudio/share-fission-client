@@ -1,7 +1,9 @@
 <template>
 	<view class="distribution-invite">
+    <!-- #ifndef H5 -->
+    <statusBar></statusBar>
+    <!-- #endif -->
 		<view class="header">
-			<text class="title">分销推荐</text>
 			<text class="subtitle">邀请好友，共享收益</text>
 		</view>
 

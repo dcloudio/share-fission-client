@@ -2,14 +2,19 @@
 	<view class="points-mall">
 		<!-- 顶部积分余额 -->
 		<view class="header-balance">
-			<view class="balance-info">
-				<text class="balance-label">我的积分</text>
-				<text class="balance-number">{{ userPoints }}</text>
-			</view>
-			<view class="order-link" @click="toExchangeOrder">
-				<text class="order-text">兑换记录</text>
-				<uni-icons type="right" size="14" color="#FFFFFF"></uni-icons>
-			</view>
+      <!-- #ifndef H5 -->
+      <statusBar></statusBar>
+      <!-- #endif -->
+      <view class="header-balance-content">
+        <view class="balance-info">
+        	<text class="balance-label">我的积分</text>
+        	<text class="balance-number">{{ userPoints }}</text>
+        </view>
+        <view class="order-link" @click="toExchangeOrder">
+        	<text class="order-text">兑换记录</text>
+        	<uni-icons type="right" size="14" color="#FFFFFF"></uni-icons>
+        </view>
+      </view>
 		</view>
 
 		<!-- 分类筛选 -->
@@ -93,10 +98,14 @@
 </template>
 
 <script>
+import statusBar from "@/uni_modules/uni-nav-bar/components/uni-nav-bar/uni-status-bar";
 const db = uniCloud.database();
 const sfCo = uniCloud.importObject('share-fission-co', { customUI: true });
 
 export default {
+	components: {
+		statusBar
+	},
 	data() {
 		return {
 			// 用户积分
@@ -342,26 +351,27 @@ page {
 	.header-balance {
 		background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
 		padding: 40rpx 30rpx;
-		flex-direction: row;
-		justify-content: space-between;
-		align-items: center;
+    .header-balance-content {
+      flex-direction: row;
+      justify-content: space-between;
+      align-items: center;
+      .balance-info {
+      	flex-direction: row;
+      	align-items: baseline;
 
-		.balance-info {
-			flex-direction: row;
-			align-items: baseline;
+      	.balance-label {
+      		font-size: 14px;
+      		color: rgba(255, 255, 255, 0.9);
+      		margin-right: 16rpx;
+      	}
 
-			.balance-label {
-				font-size: 14px;
-				color: rgba(255, 255, 255, 0.9);
-				margin-right: 16rpx;
-			}
-
-			.balance-number {
-				font-size: 24px;
-				font-weight: bold;
-				color: #FFFFFF;
-			}
-		}
+      	.balance-number {
+      		font-size: 24px;
+      		font-weight: bold;
+      		color: #FFFFFF;
+      	}
+      }
+    }
 
 		.order-link {
 			flex-direction: row;
