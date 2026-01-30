@@ -331,15 +331,16 @@ view {
 
 .my-team {
 	min-height: 100vh;
-	background: #f5f5f5;
-	padding-bottom: 40rpx;
+	background: #FAFAFA;
+	padding-bottom: 32px;
 }
 
 /* 收益统计 */
 .stats-container {
-	background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-	padding: 40rpx 30rpx 30rpx;
-	margin-bottom: 20rpx;
+	background: linear-gradient(135deg, #5B8FF9 0%, #3D6FD8 100%);
+	padding: 24px 20px 20px;
+	margin-bottom: 16px;
+	box-shadow: 0 4px 16px rgba(91, 143, 249, 0.2);
 }
 
 .stats-header {
@@ -562,9 +563,9 @@ view {
 }
 
 .member-tag {
-	background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-	padding: 8rpx 20rpx;
-	border-radius: 20rpx;
+	background: #5B8FF9;
+	padding: 4px 12px;
+	border-radius: 4px;
 }
 
 .tag-text {

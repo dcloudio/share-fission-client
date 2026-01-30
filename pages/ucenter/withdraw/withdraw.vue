@@ -440,10 +440,11 @@ view {
 
 /* 余额卡片 */
 .balance-card {
-	background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-	border-radius: 20rpx;
-	padding: 40rpx;
-	margin-bottom: 20rpx;
+	background: linear-gradient(135deg, #5B8FF9 0%, #3D6FD8 100%);
+	border-radius: 12px;
+	padding: 24px;
+	margin-bottom: 16px;
+	box-shadow: 0 4px 16px rgba(91, 143, 249, 0.2);
 }
 
 .balance-header {
@@ -696,11 +697,12 @@ view {
 .submit-btn {
 	width: 100%;
 	height: 88rpx;
-	background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-	border-radius: 44rpx;
+	background: linear-gradient(135deg, #5B8FF9 0%, #3D6FD8 100%);
+	border-radius: 8px;
 	border: none;
 	align-items: center;
 	justify-content: center;
+	box-shadow: 0 2px 8px rgba(91, 143, 249, 0.25);
 }
 
 .submit-btn[disabled] {

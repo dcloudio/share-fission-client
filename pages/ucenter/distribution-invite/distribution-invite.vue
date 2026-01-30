@@ -196,7 +196,7 @@ export default {
 }
 </script>
 
-<style lang="scss" scoped>
+<style scoped>
 view {
 	display: flex;
 	box-sizing: border-box;
@@ -205,15 +205,16 @@ view {
 
 .distribution-invite {
 	min-height: 100vh;
-	background: linear-gradient(180deg, #f5f7fa 0%, #ffffff 100%);
-	padding-bottom: 40rpx;
+	background: #FAFAFA;
+	padding-bottom: 32px;
 }
 
 .header {
-	background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-	padding: 80rpx 40rpx 60rpx;
+	background: linear-gradient(135deg, #5B8FF9 0%, #3D6FD8 100%);
+	padding: 60px 24px 48px;
 	align-items: center;
 	color: #FFFFFF;
+	box-shadow: 0 4px 16px rgba(91, 143, 249, 0.2);
 }
 
 .title {
@@ -284,8 +285,8 @@ view {
 .save-btn {
 	width: 100%;
 	height: 88rpx;
-	background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-	border-radius: 44rpx;
+	background: linear-gradient(135deg, #5B8FF9 0%, #3D6FD8 100%);
+	border-radius: 8px;
 	color: #FFFFFF;
 	font-size: 32rpx;
 	border: none;
@@ -293,6 +294,7 @@ view {
 	align-items: center;
 	justify-content: center;
 	margin-top: 20rpx;
+	box-shadow: 0 2px 8px rgba(91, 143, 249, 0.25);
 }
 
 .save-btn::after {
@@ -305,9 +307,11 @@ view {
 }
 
 .invite-code-container {
-	background: linear-gradient(135deg, #ffecd2 0%, #fcb69f 100%);
-	padding: 40rpx;
-	border-radius: 16rpx;
+	background: #FFF7E6;
+	border: 1px solid #FFD591;
+	border-radius: 12px;
+	padding: 32px;
+	margin-bottom: 16px;
 	align-items: center;
 	justify-content: center;
 }

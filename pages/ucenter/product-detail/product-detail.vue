@@ -515,11 +515,12 @@ view {
 .exchange-btn {
 	width: 300rpx;
 	height: 88rpx;
-	background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-	border-radius: 44rpx;
+	background: linear-gradient(135deg, #5B8FF9 0%, #3D6FD8 100%);
+	border-radius: 8px;
 	border: none;
 	align-items: center;
 	justify-content: center;
+	box-shadow: 0 2px 8px rgba(91, 143, 249, 0.25);
 }
 
 .exchange-btn[disabled] {

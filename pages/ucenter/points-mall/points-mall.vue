@@ -337,20 +337,20 @@ page, view {
 
 page {
 	height: 100%;
-	background: #f5f5f5;
+	background: #FAFAFA;
 }
 
 .points-mall {
 	flex: 1;
   height: 100%;
-	background: #f5f5f5;
+	background: #FAFAFA;
 	overflow: hidden;
   flex-direction: column;
 
 	/* 顶部积分余额 */
 	.header-balance {
-		background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-		padding: 40rpx 30rpx;
+		background: linear-gradient(135deg, #5B8FF9 0%, #3D6FD8 100%);
+		padding: 24px 20px;
     .header-balance-content {
       flex-direction: row;
       justify-content: space-between;
@@ -362,12 +362,12 @@ page {
       	.balance-label {
       		font-size: 14px;
       		color: rgba(255, 255, 255, 0.9);
-      		margin-right: 16rpx;
+      		margin-right: 12px;
       	}
 
       	.balance-number {
       		font-size: 24px;
-      		font-weight: bold;
+      		font-weight: 600;
       		color: #FFFFFF;
       	}
       }
@@ -376,14 +376,15 @@ page {
 		.order-link {
 			flex-direction: row;
 			align-items: center;
-			padding: 12rpx 24rpx;
-			background: rgba(255, 255, 255, 0.2);
-			border-radius: 30rpx;
+			padding: 6px 16px;
+			background: rgba(255, 255, 255, 0.15);
+			border-radius: 999px;
+			border: 1px solid rgba(255, 255, 255, 0.25);
 
 			.order-text {
 				font-size: 13px;
 				color: #FFFFFF;
-				margin-right: 4rpx;
+				margin-right: 4px;
 			}
 		}
 	}
@@ -391,31 +392,31 @@ page {
 	/* 分类筛选 */
 	.category-filter {
 		background: #FFFFFF;
-		padding: 20rpx 0;
-		margin-bottom: 20rpx;
+		padding: 12px 0;
+		margin-bottom: 12px;
 
 		.category-scroll {
 			white-space: nowrap;
 
 			.category-list {
 				flex-direction: row;
-				padding: 0 20rpx;
+				padding: 0 16px;
 
 				.category-item {
-					padding: 12rpx 32rpx;
-					margin-right: 20rpx;
-					background: #f8f8f8;
-					border-radius: 30rpx;
+					padding: 6px 20px;
+					margin-right: 12px;
+					background: #F5F5F5;
+					border-radius: 999px;
 					white-space: nowrap;
 
 					.category-text {
 						font-size: 14px;
-						color: #333333;
+						color: #595959;
 						white-space: nowrap;
 					}
 
 					&.active {
-						background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+						background: #5B8FF9;
 
 						.category-text {
 							color: #FFFFFF;
@@ -430,8 +431,8 @@ page {
 	/* 排序栏 */
 	.sort-bar {
 		background: #FFFFFF;
-		padding: 20rpx 30rpx;
-		margin-bottom: 20rpx;
+		padding: 12px 20px;
+		margin-bottom: 12px;
 		flex-direction: row;
 		justify-content: space-between;
 		align-items: center;
@@ -439,7 +440,7 @@ page {
 		.sort-left {
 			.result-count {
 				font-size: 13px;
-				color: #999999;
+				color: #8C8C8C;
 			}
 		}
 
@@ -450,18 +451,18 @@ page {
 			.sort-item {
 				flex-direction: row;
 				align-items: center;
-				margin-left: 20rpx;
-				padding: 8rpx 16rpx;
-				border-radius: 20rpx;
+				margin-left: 16px;
+				padding: 4px 12px;
+				border-radius: 4px;
 				.sort-text {
 					font-size: 13px;
-					color: #666666;
-					margin-right: 4rpx;
+					color: #595959;
+					margin-right: 4px;
 				}
 				&.active {
-					background: rgba(0, 122, 255, 0.1);
+					background: rgba(91, 143, 249, 0.1);
 					.sort-text {
-						color: #007AFF;
+						color: #5B8FF9;
 						font-weight: 500;
 					}
 				}
@@ -477,55 +478,62 @@ page {
 		.scroll-content {
 			flex-direction: row;
 			flex-wrap: wrap;
+			padding: 0 16px;
+			justify-content: space-between;
+
 			.product-item {
-				width: 345rpx;
-        margin-left: 20rpx;
+				width: calc(50% - 8px);
 				background: #FFFFFF;
-				border-radius: 16rpx;
-				margin-bottom: 20rpx;
+				border-radius: 12px;
+				margin-bottom: 16px;
 				overflow: hidden;
+				box-shadow: 0 2px 8px rgba(0, 0, 0, 0.06);
+
 				.product-image-wrapper {
-					width: 345rpx;
-					height: 345rpx;
+					width: 100%;
+					padding-bottom: 100%;
 					position: relative;
 
 					.product-image {
+						position: absolute;
+						top: 0;
+						left: 0;
 						width: 100%;
 						height: 100%;
 					}
 
 					.stock-tag {
 						position: absolute;
-						top: 16rpx;
+						top: 12px;
 						right: 0;
-						background: rgba(255, 107, 107, 0.9);
-						padding: 8rpx 16rpx;
-						border-radius: 30rpx 0 0 30rpx;
+						background: rgba(245, 34, 45, 0.9);
+						padding: 4px 12px;
+						border-radius: 999px 0 0 999px;
 
 						.stock-text {
-							font-size: 11px;
+							font-size: 12px;
 							color: #FFFFFF;
 						}
 					}
 				}
 
 				.product-info {
-					padding: 20rpx;
+					padding: 12px;
 
 					.product-name {
 						font-size: 15px;
-						color: #333333;
+						color: #262626;
 						font-weight: 500;
-						margin-bottom: 8rpx;
+						margin-bottom: 6px;
 						overflow: hidden;
 						text-overflow: ellipsis;
 						white-space: nowrap;
 					}
 
 					.product-desc {
-						font-size: 12px;
-						color: #999999;
-						margin-bottom: 16rpx;
+						font-size: 13px;
+						color: #8C8C8C;
+						margin-bottom: 12px;
 						overflow: hidden;
 						text-overflow: ellipsis;
 						white-space: nowrap;
@@ -542,20 +550,20 @@ page {
 
 							.points-number {
 								font-size: 18px;
-								font-weight: bold;
-								color: #ff6b6b;
-								margin-right: 4rpx;
+								font-weight: 600;
+								color: #F5222D;
+								margin-right: 4px;
 							}
 
 							.points-unit {
-								font-size: 12px;
-								color: #ff6b6b;
+								font-size: 13px;
+								color: #F5222D;
 							}
 						}
 
 						.exchange-count {
-							font-size: 12px;
-							color: #999999;
+							font-size: 13px;
+							color: #8C8C8C;
 						}
 					}
 				}
@@ -566,16 +574,16 @@ page {
 	/* 空状态 */
 	.empty-state {
 		background: #FFFFFF;
-		border-radius: 20rpx;
-		padding: 100rpx 0;
-		margin: 0 20rpx;
+		border-radius: 12px;
+		padding: 60px 0;
+		margin: 0 16px;
 		align-items: center;
 		justify-content: center;
 
 		.empty-text {
 			font-size: 14px;
-			color: #999999;
-			margin-top: 20rpx;
+			color: #8C8C8C;
+			margin-top: 16px;
 		}
 	}
 }

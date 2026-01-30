@@ -219,6 +219,7 @@
 </script>
 
 <style scoped>
+	/* 页面通用样式 - V3 浅蓝色主题 */
 	view {
 		display: flex;
 		box-sizing: border-box;
@@ -226,290 +227,289 @@
 	}
 
 	.pages {
-		background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+		background-color: #F7FAFC;
 		min-height: 100vh;
-		padding-bottom: 16rpx;
-		justify-content: center;
+		padding-bottom: 24px;
 	}
 
-	/* 标题栏 */
+	/* 头部区域 - V3 浅蓝色渐变 */
 	.header {
-		padding: 26rpx 28rpx 14rpx;
+		background: linear-gradient(135deg, #4299E1 0%, #3182CE 100%);
+		padding: 24px 20px 48px;
 		align-items: center;
+		border-radius: 0 0 32px 32px;
+		box-shadow: 0 10px 30px -10px rgba(66, 153, 225, 0.4);
 	}
 
 	.header-title {
-		font-size: 20px;
-		font-weight: bold;
+		font-size: 22px;
+		font-weight: 700;
 		color: #FFFFFF;
-		margin-bottom: 6rpx;
+		margin-bottom: 6px;
 	}
 
 	.header-subtitle {
-		font-size: 11px;
-		color: rgba(255, 255, 255, 0.8);
+		font-size: 14px;
+		color: rgba(255, 255, 255, 0.9);
 	}
 
 	/* 谜语卡片容器 */
 	.riddle-container {
-		padding: 0 24rpx;
-		margin-top: 10rpx;
+		padding: 0 16px;
+		margin-top: -32px;
 	}
 
 	.riddle-card {
 		background-color: #FFFFFF;
-		border-radius: 22rpx;
-		padding: 26rpx 24rpx;
-		box-shadow: 0 10rpx 28rpx rgba(0, 0, 0, 0.12);
+		border-radius: 20px;
+		padding: 24px;
+		box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.07), 0 4px 6px -2px rgba(0, 0, 0, 0.05);
 		position: relative;
+		border: 1px solid #E2E8F0;
 	}
 
-	/* 难度标签 */
+	/* 难度和分类标签 */
 	.difficulty-tag {
 		position: absolute;
-		top: 30rpx;
-		right: 30rpx;
-		padding: 10rpx 20rpx;
-		border-radius: 20rpx;
-	}
-
-	.difficulty-简单 {
-		background-color: #52c41a;
-	}
-
-	.difficulty-中等 {
-		background-color: #faad14;
-	}
-
-	.difficulty-困难 {
-		background-color: #f5222d;
+		top: 24px;
+		right: 24px;
+		padding: 5px 10px;
+		border-radius: 8px;
 	}
 
 	.difficulty-text {
-		font-size: 11px;
-		color: #FFFFFF;
-		font-weight: bold;
+		font-size: 12px;
+		font-weight: 600;
 	}
+	
+	.difficulty-简单 { background-color: #C6F6D5; color: #2F855A; }
+	.difficulty-中等 { background-color: #FEEBC8; color: #B45309; }
+	.difficulty-困难 { background-color: #FED7D7; color: #C53030; }
 
-	/* 分类标签 */
 	.category-tag {
-		margin-bottom: 12rpx;
+		margin-bottom: 16px;
 		align-self: flex-start;
 	}
 
 	.category-text {
-		font-size: 10px;
-		color: #8c8c8c;
-		background-color: #f0f0f0;
-		padding: 4rpx 14rpx;
-		border-radius: 15rpx;
+		font-size: 12px;
+		color: #3182CE;
+		background-color: #EBF8FF;
+		padding: 4px 10px;
+		border-radius: 8px;
+		font-weight: 500;
 	}
 
 	/* 谜面区域 */
 	.question-box {
-		margin-bottom: 14rpx;
-		padding: 20rpx;
-		background-color: #f6f7fb;
-		border-radius: 20rpx;
+		margin-bottom: 16px;
+		padding: 16px;
+		background-color: #F7FAFC;
+		border-radius: 12px;
+		border: 1px solid #EDF2F7;
 	}
 
 	.question-label {
-		font-size: 13px;
-		color: #667eea;
-		font-weight: bold;
-		margin-bottom: 10rpx;
+		font-size: 14px;
+		color: #3182CE;
+		font-weight: 600;
+		margin-bottom: 8px;
 	}
 
 	.question-text {
-		font-size: 15px;
-		color: #262626;
-		line-height: 40rpx;
+		font-size: 16px;
+		color: #1A202C;
+		line-height: 1.7;
+		font-weight: 500;
 	}
 
 	/* 提示信息 */
 	.hint-box {
-		margin-bottom: 18rpx;
-		padding: 14rpx 20rpx;
-		background-color: #e6f7ff;
-		border-radius: 15rpx;
+		margin-bottom: 20px;
+		padding: 10px 12px;
+		background-color: #EBF8FF;
+		border-radius: 12px;
 		align-items: center;
+		border: 1px solid #BEE3F8;
 	}
 
 	.hint-text {
-		font-size: 11px;
-		color: #1890ff;
+		font-size: 13px;
+		color: #2B6CB0;
+		font-weight: 500;
 	}
 
 	/* 输入区域 */
 	.input-box {
-		margin-bottom: 20rpx;
-		background-color: #fafafa;
-		border-radius: 20rpx;
-		padding: 20rpx;
+		margin-bottom: 20px;
+		background-color: transparent;
+		padding: 0;
 	}
 
 	.answer-input {
-		background-color: #FFFFFF;
-		border: 1px solid #d9d9d9;
-		border-radius: 15rpx;
-		padding: 16rpx 16rpx;
-		font-size: 14px;
-		color: #262626;
-		margin-bottom: 18rpx;
+		background-color: #F7FAFC;
+		border: 1px solid #E2E8F0;
+		border-radius: 12px;
+		padding: 14px;
+		font-size: 15px;
+		color: #1A202C;
+		margin-bottom: 16px;
 		text-align: center;
-		height: 64rpx;
-		line-height: 64rpx;
+		height: 52px;
+		line-height: 22px;
+	}
+
+	.answer-input:focus {
+		border-color: #4299E1;
+		box-shadow: 0 0 0 2px rgba(66, 153, 225, 0.2);
 	}
 
 	.btn-submit {
-		background: linear-gradient(135deg, #52c41a 0%, #73d13d 100%);
-		padding: 16rpx 0;
-		border-radius: 15rpx;
+		background: linear-gradient(to right, #4299E1, #3182CE);
+		padding: 14px 0;
+		border-radius: 12px;
 		align-items: center;
 		justify-content: center;
-		box-shadow: 0 8rpx 20rpx rgba(82, 196, 26, 0.3);
-		height: 64rpx;
+		box-shadow: 0 4px 14px 0 rgba(66, 153, 225, 0.3);
+		height: 52px;
 	}
 
 	.btn-submit-text {
-		font-size: 14px;
+		font-size: 16px;
 		color: #FFFFFF;
-		font-weight: bold;
+		font-weight: 600;
 	}
 
 	/* 答案区域 */
 	.answer-box {
-		margin-bottom: 22rpx;
-		padding: 22rpx;
-		background-color: #fff7e6;
-		border-radius: 20rpx;
-		min-height: 90rpx;
+		margin-bottom: 20px;
+		padding: 16px;
+		background-color: #F0FFF4;
+		border-radius: 12px;
 		justify-content: center;
+		border: 1px solid #C6F6D5;
+		text-align: center;
 	}
 
 	.answer-label {
-		font-size: 13px;
-		color: #fa8c16;
-		font-weight: bold;
-		margin-bottom: 10rpx;
+		font-size: 14px;
+		color: #38A169;
+		font-weight: 600;
+		margin-bottom: 8px;
 	}
-
-	.answer-revealed {
-		align-items: center;
-	}
-
+	
 	.answer-text {
-		font-size: 18px;
-		color: #d4380d;
-		font-weight: bold;
-	}
-
-	.answer-hidden {
-		align-items: center;
-		opacity: 0.6;
-	}
-
-	.hidden-text {
-		font-size: 12px;
-		color: #8c8c8c;
+		font-size: 20px;
+		color: #2F855A;
+		font-weight: 700;
 	}
 
 	.congratulations {
-		margin-top: 10rpx;
+		margin-top: 12px;
 		align-items: center;
 	}
 
 	.congrats-text {
-		font-size: 13px;
-		color: #52c41a;
-		font-weight: bold;
+		font-size: 15px;
+		color: #2F855A;
+		font-weight: 600;
 	}
 
-	/* 提示区域 */
+	/* "想不出来？" 提示区域 */
 	.tip-box {
-		margin-bottom: 20rpx;
-		padding: 14rpx;
-		background-color: #fff7e6;
-		border-radius: 15rpx;
+		margin-bottom: 20px;
+		padding: 16px;
+		background-color: #FEFCE8;
+		border-radius: 12px;
 		align-items: center;
+		border: 1px solid #FEEBC8;
 	}
 
 	.tip-text {
-		font-size: 11px;
-		color: #fa8c16;
-		margin-bottom: 8rpx;
+		font-size: 13px;
+		color: #B45309;
+		margin-bottom: 12px;
+		font-weight: 500;
 	}
 
 	.btn-ad-hint {
-		background: linear-gradient(135deg, #ff6b6b 0%, #ee5a6f 100%);
-		padding: 12rpx 30rpx;
-		border-radius: 30rpx;
-		box-shadow: 0 8rpx 20rpx rgba(238, 90, 111, 0.3);
+		background: linear-gradient(to right, #F6AD55, #ED8936);
+		padding: 10px 24px;
+		border-radius: 12px;
+		box-shadow: 0 4px 14px 0 rgba(237, 137, 54, 0.3);
 	}
 
 	.btn-ad-text {
-		font-size: 12px;
+		font-size: 14px;
 		color: #FFFFFF;
-		font-weight: bold;
+		font-weight: 600;
 	}
 
-	/* 按钮区域 */
+	/* "下一题" 按钮区域 */
 	.btn-box {
 		align-items: center;
-	}
-
-	.btn-answer {
-		background: linear-gradient(135deg, #ff6b6b 0%, #ee5a6f 100%);
-		padding: 25rpx 60rpx;
-		border-radius: 50rpx;
-		box-shadow: 0 10rpx 30rpx rgba(238, 90, 111, 0.3);
+		margin-top: 16px;
 	}
 
 	.btn-next {
-		background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-		padding: 20rpx 42rpx;
-		border-radius: 36rpx;
-		box-shadow: 0 10rpx 30rpx rgba(102, 126, 234, 0.3);
+		background: linear-gradient(to right, #4299E1, #3182CE);
+		padding: 12px 32px;
+		border-radius: 12px;
+		box-shadow: 0 4px 14px 0 rgba(66, 153, 225, 0.3);
 	}
 
 	.btn-text {
-		font-size: 14px;
+		font-size: 16px;
 		color: #FFFFFF;
-		font-weight: bold;
+		font-weight: 600;
 	}
 
 	/* 进度指示器 */
 	.progress-box {
 		align-items: center;
-		margin-top: 20rpx;
+		margin-top: 24px;
+		padding: 10px 24px;
+		background: #FFFFFF;
+		border-radius: 999px;
+		margin-left: auto;
+		margin-right: auto;
+		box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.05), 0 2px 4px -1px rgba(0, 0, 0, 0.04);
+		max-width: 200px;
 	}
 
 	.progress-text {
-		font-size: 12px;
-		color: rgba(255, 255, 255, 0.9);
+		font-size: 14px;
+		color: #4A5568;
+		font-weight: 500;
 	}
 
-	/* 导航按钮 */
+	/* 上一题/下一题 导航按钮 */
 	.nav-buttons {
 		flex-direction: row;
-		justify-content: space-around;
-		padding: 0 24rpx;
-		margin-top: 20rpx;
+		justify-content: space-between;
+		padding: 0 16px;
+		margin-top: 20px;
+		gap: 16px;
 	}
 
 	.btn-nav {
-		background-color: rgba(255, 255, 255, 0.2);
-		padding: 14rpx 36rpx;
-		border-radius: 32rpx;
-		border: 1px solid rgba(255, 255, 255, 0.3);
+		flex: 1;
+		background-color: #FFFFFF;
+		padding: 14px 20px;
+		border-radius: 12px;
+		border: 1px solid #E2E8F0;
+		align-items: center;
+		box-shadow: 0 2px 4px 0 rgba(0, 0, 0, 0.03);
 	}
 
 	.btn-disabled {
 		opacity: 0.5;
+		background-color: #F7FAFC;
 	}
 
 	.nav-text {
-		font-size: 12px;
-		color: #FFFFFF;
+		font-size: 15px;
+		color: #2D3748;
+		font-weight: 600;
 	}
 </style>

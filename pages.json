@@ -220,7 +220,7 @@
 		},
 		// #endif
 		"navigationBarTextStyle": "black",
-		"navigationBarTitleText": "uni-starter",
+		"navigationBarTitleText": "share-fission",
 		"navigationBarBackgroundColor": "#FFFFFF",
 		"backgroundColor": "#F8F8F8",
 		"enablePullDownRefresh": false,
