@@ -3,7 +3,6 @@
 		<!-- #ifndef H5 -->
 		<statusBar></statusBar>
 		<!-- #endif -->
-		<uni-sign-in ref="signIn"></uni-sign-in>
 
 		<!-- 用户信息卡片 -->
 		<view class="user-card" @click.capture="toUserInfo">
@@ -27,12 +26,6 @@
 			</view>
 			<view class="menu-grid">
 				<!-- #ifdef APP-PLUS -->
-				<view class="menu-item" @click="signInByAd">
-					<view class="menu-icon">
-						<uni-icons type="compose" size="22" color="#3182CE"></uni-icons>
-					</view>
-					<text class="menu-text">看广告签到</text>
-				</view>
 				<view class="menu-item" @click="gotoMarket">
 					<view class="menu-icon">
 						<uni-icons type="star" size="22" color="#3182CE"></uni-icons>
@@ -163,12 +156,6 @@
 					url: "/pages/ucenter/settings/settings"
 				})
 			},
-			signIn() {
-				this.$refs.signIn.open()
-			},
-			signInByAd(){
-				this.$refs.signIn.showRewardedVideoAd()
-			},
 			async checkVersion() {
 				let res = await callCheckVersion()
 				if (res.result.code > 0) {
@@ -188,8 +175,10 @@
 			gotoMarket() {
 				// #ifdef APP-PLUS
 				if (uni.getSystemInfoSync().platform == "ios") {
-					let appstoreid = this.appConfig.marketId.ios;
-					plus.runtime.openURL("itms-apps://" + 'itunes.apple.com/cn/app/wechat/' + appstoreid + '?mt=8', err => {});
+					const appstoreid = this.appConfig?.marketId?.ios || '';
+					if (appstoreid) {
+						plus.runtime.openURL('https://itunes.apple.com/cn/app/id' + appstoreid + '?mt=8', err => {});
+					}
 				}
 				if (uni.getSystemInfoSync().platform == "android") {
 					var Uri = plus.android.importClass("android.net.Uri");
