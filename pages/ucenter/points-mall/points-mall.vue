@@ -158,6 +158,12 @@ export default {
 		this.loadUserPoints()
 		this.loadCategoriesAndProducts()
 	},
+	onShow() {
+		if (getApp().globalData.pointsNeedRefresh) {
+			getApp().globalData.pointsNeedRefresh = false
+			this.loadUserPoints()
+		}
+	},
 	methods: {
 		/**
 		 * 加载用户积分

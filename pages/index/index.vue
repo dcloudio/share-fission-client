@@ -97,6 +97,7 @@
 	import statusBar from "@/uni_modules/uni-nav-bar/components/uni-nav-bar/uni-status-bar";
 	import riddleData from "@/data/riddles.js";
 	import AD from "@/utils/ad.js";
+	import {store} from "@/uni_modules/uni-id-pages/common/store.js";
 
 	export default {
 		components: {
@@ -133,8 +134,26 @@
 				}
 			},
 
+			// 校验登录，未登录则跳转登录页
+			requireLogin() {
+				if (!store.hasLogin) {
+					uni.showToast({
+						title: '请先登录',
+						icon: 'none'
+					})
+					const redirectUrl = '/pages/index/index'
+					uni.navigateTo({
+						url: '/uni_modules/uni-id-pages/pages/login/login-withoutpwd?uniIdRedirectUrl=' + encodeURIComponent(redirectUrl)
+					})
+					return false
+				}
+				return true
+			},
+
 			// 验证答案
 			checkAnswer() {
+				if (!this.requireLogin()) return
+
 				const trimmedAnswer = this.userAnswer?.trim()
 
 				if (!trimmedAnswer) {
@@ -168,7 +187,17 @@
 
 			// 观看广告查看答案
 			watchAdForAnswer() {
+				if (!this.requireLogin()) return
+
+				const userId = uniCloud.getCurrentUserInfo().uid
+				console.log('watchAdForAnswer 用户ID:', userId);
 				AD.showRewardedAd({
+					urlCallback: {
+						userId,
+            			extra: {
+							action: 'watchAdForAnswer'
+						}
+					},
 					onSuccess: () => {
 						// 广告播放完成，显示答案
 						this.showAnswer = true;
@@ -176,6 +205,8 @@
 							title: '感谢观看！',
 							icon: 'success'
 						});
+						// 标记商城页需要重新拉取积分
+						getApp().globalData.pointsNeedRefresh = true;
 					},
 					cancelMessage: '请完整观看广告才能查看答案'
 				})
@@ -281,7 +312,7 @@
 		font-size: 12px;
 		font-weight: 600;
 	}
-	
+
 	.difficulty-简单 { background-color: #C6F6D5; color: #2F855A; }
 	.difficulty-中等 { background-color: #FEEBC8; color: #B45309; }
 	.difficulty-困难 { background-color: #FED7D7; color: #C53030; }
@@ -397,7 +428,7 @@
 		font-weight: 600;
 		margin-bottom: 8px;
 	}
-	
+
 	.answer-text {
 		font-size: 20px;
 		color: #2F855A;

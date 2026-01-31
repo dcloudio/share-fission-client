@@ -10,7 +10,8 @@
 		globalData: {
 			searchText: '',
 			appVersion: {},
-			config: {}
+			config: {},
+			pointsNeedRefresh: false
 		},
 		onLaunch: function() {
 			console.log('App Launch')
