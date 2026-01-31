@@ -4,10 +4,6 @@ import uniStarterConfig from '@/uni-starter.config.js';
 import checkUpdate from '@/uni_modules/uni-upgrade-center-app/utils/check-update';
 import callCheckVersion from '@/uni_modules/uni-upgrade-center-app/utils/call-check-version';
 
-// 实现，路由拦截。当应用无访问摄像头/相册权限，引导跳到设置界面 https://ext.dcloud.net.cn/plugin?id=5095
-import interceptorChooseImage from '@/uni_modules/json-interceptor-chooseImage/js_sdk/main.js';
-interceptorChooseImage()
-
 // #endif
 const db = uniCloud.database()
 export default async function() {
