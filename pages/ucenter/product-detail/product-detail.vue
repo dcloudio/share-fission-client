@@ -36,12 +36,13 @@
 		</view>
 
 		<!-- 商品详情 -->
-		<view class="product-detail-card">
+		<view class="product-detail-card" v-if="product.detail_images?.length > 0">
 			<view class="detail-header">
 				<text class="detail-title">商品详情</text>
 			</view>
 			<view class="detail-content">
-				<text class="detail-text">{{ product.detail }}</text>
+				<image class="detail-image" :src="product.detail_images?.[0]" mode="aspectFill"></image>
+
 			</view>
 		</view>
 
@@ -169,7 +170,8 @@ export default {
 						soldCount: Number(g.sales_count || 0),
 						image: (g.images && g.images.length > 0) ? String(g.images[0]) : '',
 						images: (g.images && g.images.length > 0) ? g.images : [],
-						detail: String(g.detail || '')
+						detail: String(g.detail || ''),
+						detail_images: (g.detail_images && g.detail_images.length > 0) ? g.detail_images : []
 					}
 				} else if (!cachedProduct) {
 					uni.showToast({
