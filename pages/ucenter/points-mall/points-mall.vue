@@ -82,25 +82,25 @@
 			<view class="scroll-content">
 				<view
 					v-for="(product, index) in sortedProducts"
-					:key="product.id"
+					:key="product._id"
 					class="product-item"
-					@click="toProductDetail(product.id)"
+					@click="toProductDetail(product._id)"
 				>
 					<view class="product-image-wrapper">
-						<image class="product-image" :src="product.image" mode="aspectFill"></image>
+						<image class="product-image" :src="product.images?.[0]" mode="aspectFill"></image>
 						<view v-if="product.stock <= 10" class="stock-tag">
 							<text class="stock-text">仅剩{{ product.stock }}件</text>
 						</view>
 					</view>
 					<view class="product-info">
 						<text class="product-name">{{ product.name }}</text>
-						<text class="product-desc">{{ product.desc }}</text>
+						<text class="product-desc">{{ product.description }}</text>
 						<view class="product-footer">
 							<view class="product-points">
-								<text class="points-number">{{ product.points }}</text>
+								<text class="points-number">{{ product.score_cost }}</text>
 								<text class="points-unit">积分</text>
 							</view>
-							<text class="exchange-count">已兑{{ product.soldCount }}</text>
+							<text class="exchange-count">已兑{{ product.sales_count || 0 }}</text>
 						</view>
 					</view>
 				</view>
@@ -156,9 +156,9 @@ export default {
 		sortedProducts() {
 			const products = [...this.filteredProducts]
 			if (this.sortType === 'asc') {
-				return products.sort((a, b) => a.points - b.points)
+				return products.sort((a, b) => a.score_cost - b.score_cost)
 			} else {
-				return products.sort((a, b) => b.points - a.points)
+				return products.sort((a, b) => b.score_cost - a.score_cost)
 			}
 		}
 	},
@@ -267,26 +267,18 @@ export default {
 				})
 				const list = (res && (res.list || (res.data && res.data.list))) || []
 
-				const mapped = list.map((g) => {
-					return {
-						id: String(g._id || ''),
-						name: String(g.name || ''),
-						desc: String(g.description || ''),
-						category: String(g.category_id || ''),
-						points: Number(g.score_cost || 0),
-						stock: Number(g.stock || 0),
-						soldCount: Number(g.sales_count || 0),
-						image: (g.images && g.images.length > 0) ? String(g.images[0]) : '',
-						images: (g.images && g.images.length > 0) ? g.images : [],
-						detail: String(g.detail || '')
-					}
+				// 直接使用后端返回的数据，不做映射
+				let products = this.products.concat(list)
+				// 根据_id去重
+				const uniqueProducts = {}
+				products.forEach(product => {
+					uniqueProducts[product._id] = product
 				})
-
-				this.products = this.products.concat(mapped)
+				this.products = Object.values(uniqueProducts)
 				this.mallProductsCache = this.products
 				uni.setStorageSync('mall_products', this.mallProductsCache)
 
-				if (mapped.length >= this.pageSize) {
+				if (list.length >= this.pageSize) {
           this.pageIndex = this.pageIndex + 1
 				}
 			} catch (e) {
