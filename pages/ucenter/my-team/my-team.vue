@@ -29,11 +29,11 @@
 					<text class="stat-value">{{ statsData.points }}</text>
 				</view>
 				<view class="stat-card">
-					<text class="stat-label">一级下线</text>
+					<text class="stat-label">一级用户</text>
 					<text class="stat-value highlight">{{ statsData.level1Count }}</text>
 				</view>
 				<view class="stat-card">
-					<text class="stat-label">二级下线</text>
+					<text class="stat-label">二级用户</text>
 					<text class="stat-value highlight">{{ statsData.level2Count }}</text>
 				</view>
 			</view>
@@ -96,7 +96,7 @@
 				</view>
 
 				<!-- 加载更多 -->
-				<view v-if="teamList.length > 0" class="load-more">
+				<view v-if="teamList.length > 0 && (loadMoreStatus === 'loading' || loadMoreStatus === 'more' || hasLoadedMore)" class="load-more">
 					<uni-load-more :status="loadMoreStatus"></uni-load-more>
 				</view>
 			</view>
@@ -107,7 +107,6 @@
 <script>
 import statusBar from "@/uni_modules/uni-nav-bar/components/uni-nav-bar/uni-status-bar";
 const sfCo = uniCloud.importObject('share-fission-co', { customUI: true });
-const uniIdCo = uniCloud.importObject('uni-id-co', { customUI: true });
 
 export default {
 	components: {
@@ -150,7 +149,8 @@ export default {
 
 			// 加载状态
 			loading: false,
-			loadMoreStatus: 'more'
+			loadMoreStatus: 'more',
+			hasLoadedMore: false // 是否已加载过更多数据
 		}
 	},
 	onLoad() {
@@ -173,15 +173,19 @@ export default {
 			this.loadMoreStatus = 'loading'
 
 			try {
-				// 使用云对象获取受邀用户
-				const res = await uniIdCo.getInvitedUser({
-					level: this.currentLevel,
-					limit: this.limit,
-					offset: this.offset,
-					needTotal: true
+				// 使用 share-fission-co 获取团队成员
+				const res = await sfCo.action({
+					name: 'client/user/getTeamMembers',
+					data: {
+						level: this.currentLevel,
+						timeRange: this.currentTimeFilter,
+						limit: this.limit,
+						offset: this.offset,
+						needTotal: true
+					}
 				})
 
-				if (res.errCode !== 0) {
+				if (res?.errCode && res.errCode !== 0) {
 					uni.showToast({
 						title: res.errMsg || '加载失败',
 						icon: 'none'
@@ -190,19 +194,22 @@ export default {
 					return
 				}
 
-				const newList = res.invitedUser || []
+				const result = res?.data || res || {}
+				const newList = result.invitedUser || []
 
 				if (this.offset === 0) {
 					this.teamList = newList
+					this.hasLoadedMore = false
 				} else {
 					this.teamList = [...this.teamList, ...newList]
+					this.hasLoadedMore = true
 				}
 
 				// 更新加载状态
 				this.loadMoreStatus = newList.length < this.limit ? 'noMore' : 'more'
 			} catch (error) {
 				uni.showToast({
-					title: '加载失败',
+					title: error.message || '加载失败',
 					icon: 'none'
 				})
 				this.loadMoreStatus = 'noMore'
@@ -257,7 +264,12 @@ export default {
 		 */
 		changeTimeFilter(value) {
 			this.currentTimeFilter = value
+			this.offset = 0
+			this.teamList = []
+			this.loadMoreStatus = 'more'
+			this.hasLoadedMore = false
 			this.loadStatsData()
+			this.loadTeamData()
 		},
 
 		/**
@@ -270,6 +282,7 @@ export default {
 			this.offset = 0
 			this.teamList = []
 			this.loadMoreStatus = 'more'
+			this.hasLoadedMore = false
 			this.loadTeamData()
 		},
 

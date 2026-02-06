@@ -14,18 +14,14 @@
 			<view class="product-header">
 				<view class="product-title-section">
 					<text class="product-name">{{ product.name }}</text>
-					<text class="product-desc">{{ product.desc }}</text>
-				</view>
-				<view class="product-points-section">
-					<text class="points-number">{{ product.points }}</text>
-					<text class="points-unit">积分</text>
+					<text class="product-desc">{{ product.description }}</text>
 				</view>
 			</view>
 
 			<view class="product-stats">
 				<view class="stat-item">
 					<text class="stat-label">已兑换</text>
-					<text class="stat-value">{{ product.soldCount }}</text>
+					<text class="stat-value">{{ product.sales_count || 0 }}</text>
 				</view>
 				<view class="stat-divider"></view>
 				<view class="stat-item">
@@ -75,8 +71,8 @@
 		<!-- 底部操作栏 -->
 		<view class="bottom-bar">
 			<view class="user-points">
-				<text class="points-label">我的积分</text>
-				<text class="points-value">{{ userPoints }}</text>
+				<text class="points-label">兑换所需</text>
+				<text class="points-value">{{ product.score_cost }} 积分</text>
 			</view>
 			<button
 				class="exchange-btn"
@@ -101,9 +97,9 @@ export default {
 				id: '',
 				name: '',
 				desc: '',
-				points: 0,
+				score_cost: "-",
 				stock: 0,
-				soldCount: 0,
+				sales_count: 0,
 				image: '',
 				images: [],
 				detail: ''
@@ -115,7 +111,7 @@ export default {
 	computed: {
 		// 是否可以兑换
 		canExchange() {
-			return this.userPoints >= this.product.points && this.product.stock > 0 && !this.exchanging
+			return this.userPoints >= this.product.score_cost && this.product.stock > 0 && !this.exchanging
 		},
 
 		// 兑换按钮文本
@@ -126,7 +122,7 @@ export default {
 			if (this.product.stock <= 0) {
 				return '已售罄'
 			}
-			if (this.userPoints < this.product.points) {
+			if (this.userPoints < this.product.score_cost) {
 				return '积分不足'
 			}
 			return '立即兑换'
@@ -160,19 +156,8 @@ export default {
 				})
 
 				if (res && !res.errCode) {
-					const g = res
-					this.product = {
-						id: String(g._id || ''),
-						name: String(g.name || ''),
-						desc: String(g.description || ''),
-						points: Number(g.score_cost || 0),
-						stock: Number(g.stock || 0),
-						soldCount: Number(g.sales_count || 0),
-						image: (g.images && g.images.length > 0) ? String(g.images[0]) : '',
-						images: (g.images && g.images.length > 0) ? g.images : [],
-						detail: String(g.detail || ''),
-						detail_images: (g.detail_images && g.detail_images.length > 0) ? g.detail_images : []
-					}
+					// 直接使用后端返回的数据，不做映射
+					this.product = res
 				} else if (!cachedProduct) {
 					uni.showToast({
 						title: '商品不存在',
@@ -225,7 +210,7 @@ export default {
 
 			uni.showModal({
 				title: '确认兑换',
-				content: `确认使用${this.product.points}积分兑换【${this.product.name}】？`,
+				content: `确认使用${this.product.score_cost}积分兑换【${this.product.name}】？`,
 				success: (res) => {
 					if (res.confirm) {
 						this.processExchange()
@@ -265,7 +250,7 @@ export default {
 				}
 
 				// 更新本地积分和库存
-				this.userPoints -= this.product.points
+				this.userPoints -= this.product.score_cost
 				this.product.stock -= 1
 				this.product.soldCount += 1
 
@@ -340,7 +325,6 @@ view {
 
 .product-title-section {
 	flex: 1;
-	margin-right: 20rpx;
 }
 
 .product-name {
@@ -356,21 +340,6 @@ view {
 	color: #999999;
 }
 
-.product-points-section {
-	align-items: flex-end;
-}
-
-.points-number {
-	font-size: 48rpx;
-	font-weight: bold;
-	color: #ff6b6b;
-	margin-bottom: 4rpx;
-}
-
-.points-unit {
-	font-size: 24rpx;
-	color: #ff6b6b;
-}
 
 .product-stats {
 	flex-direction: row;
@@ -520,6 +489,7 @@ view {
 	background: linear-gradient(135deg, #5B8FF9 0%, #3D6FD8 100%);
 	border-radius: 8px;
 	border: none;
+	display: flex;
 	align-items: center;
 	justify-content: center;
 	box-shadow: 0 2px 8px rgba(91, 143, 249, 0.25);
