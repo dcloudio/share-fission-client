@@ -255,7 +255,7 @@
 			"pagePath": "pages/ucenter/points-mall/points-mall",
 			"iconPath": "static/tabbar/mall.png",
 			"selectedIconPath": "static/tabbar/mall_active.png",
-			"text": "商城"
+			"text": "积分商城"
 		}, {
 			"pagePath": "pages/ucenter/my-team/my-team",
 			"iconPath": "static/tabbar/grid.png",

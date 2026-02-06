@@ -19,14 +19,30 @@
 
 		<!-- 分类筛选 -->
 		<view class="category-filter">
+			<!-- 一级分类 -->
 			<scroll-view scroll-x class="category-scroll">
 				<view class="category-list">
 					<view
-						v-for="(category, index) in categories"
+						v-for="(category, index) in level1Categories"
 						:key="index"
 						class="category-item"
-						:class="{ active: currentCategory === category.value }"
-						@click="selectCategory(category.value)"
+						:class="{ active: currentLevel1 === category.value }"
+						@click="selectLevel1Category(category.value)"
+					>
+						<text class="category-text">{{ category.label }}</text>
+					</view>
+				</view>
+			</scroll-view>
+
+			<!-- 二级分类 -->
+			<scroll-view v-if="level2Categories.length > 0" scroll-x class="category-scroll level2-scroll">
+				<view class="category-list">
+					<view
+						v-for="(category, index) in level2Categories"
+						:key="index"
+						class="category-item level2-item"
+						:class="{ active: currentLevel2 === category.value }"
+						@click="selectLevel2Category(category.value)"
 					>
 						<text class="category-text">{{ category.label }}</text>
 					</view>
@@ -35,65 +51,63 @@
 		</view>
 
 		<!-- 排序 -->
-		<view class="sort-bar">
+		<view v-if="!loading" class="sort-bar">
 			<view class="sort-left">
 				<text class="result-count">共 {{ filteredProducts.length }} 件商品</text>
 			</view>
 			<view class="sort-right">
-				<view
-					class="sort-item"
-					:class="{ active: sortType === 'asc' }"
-					@click="changeSortType('asc')"
-				>
+				<view class="sort-item active" @click="toggleSortType">
 					<text class="sort-text">积分</text>
-					<uni-icons type="up" size="12" :color="sortType === 'asc' ? '#007AFF' : '#999999'"></uni-icons>
-				</view>
-				<view
-					class="sort-item"
-					:class="{ active: sortType === 'desc' }"
-					@click="changeSortType('desc')"
-				>
-					<text class="sort-text">积分</text>
-					<uni-icons type="down" size="12" :color="sortType === 'desc' ? '#007AFF' : '#999999'"></uni-icons>
+					<uni-icons
+						:type="sortType === 'asc' ? 'up' : 'down'"
+						size="12"
+						color="#007AFF"
+					></uni-icons>
 				</view>
 			</view>
 		</view>
 
-		<!-- 商品列表 -->
-    <scroll-view class="product-list" scroll-y>
-      <view class="scroll-content">
-        <view
-        	v-for="(product, index) in sortedProducts"
-        	:key="product.id"
-        	class="product-item"
-        	@click="toProductDetail(product.id)"
-        >
-        	<view class="product-image-wrapper">
-        		<image class="product-image" :src="product.image" mode="aspectFill"></image>
-        		<view v-if="product.stock <= 10" class="stock-tag">
-        			<text class="stock-text">仅剩{{ product.stock }}件</text>
-        		</view>
-        	</view>
-        	<view class="product-info">
-        		<text class="product-name">{{ product.name }}</text>
-        		<text class="product-desc">{{ product.desc }}</text>
-        		<view class="product-footer">
-        			<view class="product-points">
-        				<text class="points-number">{{ product.points }}</text>
-        				<text class="points-unit">积分</text>
-        			</view>
-        			<text class="exchange-count">已兑{{ product.soldCount }}</text>
-        		</view>
-        	</view>
-        </view>
-      </view>
-    </scroll-view>
-
-		<!-- 空状态 -->
-		<view v-if="filteredProducts.length === 0" class="empty-state">
-			<uni-icons type="shop" size="60" color="#cccccc"></uni-icons>
-			<text class="empty-text">暂无商品</text>
+		<!-- 加载状态 -->
+		<view v-if="loading && products.length === 0" class="loading-wrapper">
+			<text class="loading-text">加载中...</text>
 		</view>
+    <!-- 空状态 -->
+    <view v-else-if="!loading && filteredProducts.length === 0" class="empty-state">
+    	<uni-icons type="shop" size="60" color="#cccccc"></uni-icons>
+    	<text class="empty-text">暂无商品</text>
+    </view>
+
+		<!-- 商品列表 -->
+		<scroll-view v-else class="product-list" scroll-y>
+			<view class="scroll-content">
+				<view
+					v-for="(product, index) in sortedProducts"
+					:key="product.id"
+					class="product-item"
+					@click="toProductDetail(product.id)"
+				>
+					<view class="product-image-wrapper">
+						<image class="product-image" :src="product.image" mode="aspectFill"></image>
+						<view v-if="product.stock <= 10" class="stock-tag">
+							<text class="stock-text">仅剩{{ product.stock }}件</text>
+						</view>
+					</view>
+					<view class="product-info">
+						<text class="product-name">{{ product.name }}</text>
+						<text class="product-desc">{{ product.desc }}</text>
+						<view class="product-footer">
+							<view class="product-points">
+								<text class="points-number">{{ product.points }}</text>
+								<text class="points-unit">积分</text>
+							</view>
+							<text class="exchange-count">已兑{{ product.soldCount }}</text>
+						</view>
+					</view>
+				</view>
+			</view>
+		</scroll-view>
+
+
 	</view>
 </template>
 
@@ -109,39 +123,33 @@ export default {
 	data() {
 		return {
 			// 用户积分
-			userPoints: 5000,
+			userPoints: "-",
 
-			// 分类（后端动态加载，这里只保留“全部”兜底）
-			categories: [
-				{ label: '全部', value: 'all' }
+			// 多级分类
+			level1Categories: [
+				{ label: '全部', value: 'all', children: [] }
 			],
-			currentCategory: 'all',
+			level2Categories: [],
+			currentLevel1: 'all',
+			currentLevel2: '',
 
 			// 排序
 			sortType: 'asc', // asc: 积分从低到高, desc: 积分从高到低
 
 			// 商品列表（由后端加载）
 			products: [],
-			// 后端分类ID映射（用于筛选）
-			categoryMap: {
-				all: ''
-			},
 			// 分页
 			pageIndex: 1,
 			pageSize: 200,
-			loading: false,
-			finished: false,
+			loading: true,
 			// 缓存当前列表，用于详情页读取
 			mallProductsCache: []
 		}
 	},
 	computed: {
-		// 过滤后的商品
+		// 过滤后的商品（后端已按分类过滤，前端直接返回）
 		filteredProducts() {
-			if (this.currentCategory === 'all') {
-				return this.products
-			}
-			return this.products.filter(product => product.category === this.currentCategory)
+			return this.products
 		},
 
 		// 排序后的商品
@@ -195,42 +203,42 @@ export default {
 		},
 
 		/**
-		 * 加载分类（client/goodsCategories/getList）
+		 * 加载分类（client/goodsCategories/getTree）
 		 */
 		async loadCategories() {
 			try {
 				const res = await sfCo.action({
-					name: 'client/goodsCategories/getList',
-					data: {
-						pageIndex: 1,
-						pageSize: 200,
-						sortField: 'sort',
-						sortOrder: 'asc'
-					}
+					name: 'client/goodsCategories/getTree',
+					data: {}
 				})
-				const list = (res && (res.list || (res.data && res.data.list))) || []
+				const tree = (res && res.tree) || []
 
-				// 组装分类：全部 + 后端分类
-				const newCategories = [{ label: '全部', value: 'all' }]
-				const map = { all: '' }
+				// 组装一级分类：全部 + 后端一级分类
+				const level1Categories = [{ label: '全部', value: 'all', children: [] }]
 
-				list.forEach((c) => {
+				tree.forEach((c) => {
 					if (c && c._id && c.name) {
-						const val = String(c._id)
-						newCategories.push({ label: String(c.name), value: val })
-						map[val] = val
+						level1Categories.push({
+							label: String(c.name),
+							value: String(c._id),
+							children: (c.children || []).map(child => ({
+								label: String(child.name || ''),
+								value: String(child._id || '')
+							}))
+						})
 					}
 				})
 
-				this.categories = newCategories
-				this.categoryMap = map
-				// 默认选中全部
-				this.currentCategory = 'all'
+				this.level1Categories = level1Categories
+				this.currentLevel1 = 'all'
+				this.currentLevel2 = ''
+				this.level2Categories = []
 			} catch (e) {
 				console.error('加载分类失败:', e)
-				this.categories = [{ label: '全部', value: 'all' }]
-				this.categoryMap = { all: '' }
-				this.currentCategory = 'all'
+				this.level1Categories = [{ label: '全部', value: 'all', children: [] }]
+				this.currentLevel1 = 'all'
+				this.currentLevel2 = ''
+				this.level2Categories = []
 			}
 		},
 
@@ -238,16 +246,15 @@ export default {
 		 * 加载商品（client/goods/getList）
 		 */
 		async loadProducts(reset) {
-			if (this.loading || this.finished) return
 			this.loading = true
 			try {
 				if (reset) {
 					this.products = []
 					this.pageIndex = 1
-					this.finished = false
 				}
 
-				const categoryId = this.currentCategory === 'all' ? '' : this.currentCategory
+				// 优先使用二级分类，其次一级分类
+				const categoryId = this.currentLevel2 || (this.currentLevel1 === 'all' ? '' : this.currentLevel1)
 				const res = await sfCo.action({
 					name: 'client/goods/getList',
 					data: {
@@ -279,10 +286,8 @@ export default {
 				this.mallProductsCache = this.products
 				uni.setStorageSync('mall_products', this.mallProductsCache)
 
-				if (mapped.length < this.pageSize) {
-					this.finished = true
-				} else {
-					this.pageIndex = this.pageIndex + 1
+				if (mapped.length >= this.pageSize) {
+          this.pageIndex = this.pageIndex + 1
 				}
 			} catch (e) {
 				console.error('加载商品失败:', e)
@@ -296,21 +301,37 @@ export default {
 		},
 
 		/**
-		 * 选择分类
+		 * 选择一级分类
 		 */
-		selectCategory(category) {
-			this.currentCategory = category
+		selectLevel1Category(value) {
+			this.currentLevel1 = value
+			this.currentLevel2 = ''
+
+			// 更新二级分类列表
+			const selected = this.level1Categories.find(c => c.value === value)
+			this.level2Categories = (selected && selected.children) || []
+
 			// 重置分页并重新加载
 			this.pageIndex = 1
-			this.finished = false
+			this.loadProducts(true)
+		},
+
+		/**
+		 * 选择二级分类
+		 */
+		selectLevel2Category(value) {
+			this.currentLevel2 = value
+
+			// 重置分页并重新加载
+			this.pageIndex = 1
 			this.loadProducts(true)
 		},
 
 		/**
 		 * 切换排序
 		 */
-		changeSortType(type) {
-			this.sortType = type
+		toggleSortType() {
+			this.sortType = this.sortType === 'asc' ? 'desc' : 'asc'
 		},
 
 		/**
@@ -404,6 +425,13 @@ page {
 		.category-scroll {
 			white-space: nowrap;
 
+			/* 隐藏滚动条 */
+			::-webkit-scrollbar {
+				display: none;
+			}
+			-ms-overflow-style: none;
+			scrollbar-width: none;
+
 			.category-list {
 				flex-direction: row;
 				padding: 0 16px;
@@ -430,7 +458,29 @@ page {
 						}
 					}
 				}
+
+				// 二级分类样式
+				.level2-item {
+					background: #E6F7FF;
+
+					.category-text {
+						color: #1890FF;
+					}
+
+					&.active {
+						background: #1890FF;
+
+						.category-text {
+							color: #FFFFFF;
+						}
+					}
+				}
 			}
+		}
+
+		// 二级分类滚动区域
+		.level2-scroll {
+			margin-top: 8px;
 		}
 	}
 
@@ -473,6 +523,19 @@ page {
 					}
 				}
 			}
+		}
+	}
+
+	/* 加载状态 */
+	.loading-wrapper {
+		flex: 1;
+		display: flex;
+		align-items: center;
+		justify-content: center;
+
+		.loading-text {
+			font-size: 14px;
+			color: #8C8C8C;
 		}
 	}
 
