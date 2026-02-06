@@ -537,16 +537,14 @@ page {
 		flex: 1;
 
 		.scroll-content {
-			flex-direction: row;
-			flex-wrap: wrap;
+			display: grid;
+			grid-template-columns: repeat(2, 1fr);
+			grid-gap: 16px;
 			padding: 0 16px;
-			justify-content: space-between;
 
 			.product-item {
-				width: calc(50% - 8px);
 				background: #FFFFFF;
 				border-radius: 12px;
-				margin-bottom: 16px;
 				overflow: hidden;
 				box-shadow: 0 2px 8px rgba(0, 0, 0, 0.06);
 
@@ -646,6 +644,20 @@ page {
 			color: #8C8C8C;
 			margin-top: 16px;
 		}
+	}
+}
+
+/* 平板竖屏：1行3列 */
+@media (min-width: 600px) {
+	.product-list .scroll-content {
+		grid-template-columns: repeat(3, 1fr) !important;
+	}
+}
+
+/* 平板横屏：1行4列 */
+@media (min-width: 800px) {
+	.product-list .scroll-content {
+		grid-template-columns: repeat(4, 1fr) !important;
 	}
 }
 </style>
