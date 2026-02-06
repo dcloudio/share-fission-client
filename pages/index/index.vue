@@ -82,14 +82,14 @@
 		</view>
 
 		<!-- 切换按钮 -->
-		<view class="nav-buttons">
+		<!-- <view class="nav-buttons">
 			<view class="btn-nav" @click="prevRiddle" :class="{ 'btn-disabled': currentIndex === 0 }">
 				<text class="nav-text">上一题</text>
 			</view>
 			<view class="btn-nav" @click="nextRiddle" :class="{ 'btn-disabled': currentIndex === totalRiddles - 1 }">
 				<text class="nav-text">下一题</text>
 			</view>
-		</view>
+		</view> -->
 	</view>
 </template>
 
