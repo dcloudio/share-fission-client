@@ -45,6 +45,13 @@
 			}
 		},
 		{
+			"path": "pages/ucenter/points-record/points-record",
+			"style": {
+				"navigationBarTitleText": "积分记录",
+				"enablePullDownRefresh": false
+			}
+		},
+		{
 			"path": "pages/ucenter/withdraw-record/withdraw-record",
 			"style": {
 				"navigationBarTitleText": "提现记录"

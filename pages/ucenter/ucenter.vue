@@ -195,26 +195,9 @@
 					title: "请登录后查看积分",
 					icon: 'none'
 				});
-				uni.showLoading({
-					mask: true
+				uni.navigateTo({
+					url: '/pages/ucenter/points-record/points-record'
 				})
-				db.collection("uni-id-scores")
-					.where('"user_id" == $env.uid')
-					.field('score,balance')
-					.orderBy("create_date", "desc")
-					.limit(1)
-					.get()
-					.then((res) => {
-						const data = res.result.data[0];
-						let msg = '';
-						msg = data ? ("当前积分为"+ data.balance) : "当前无积分";
-						uni.showToast({
-							title: msg,
-							icon: 'none'
-						});
-					}).finally(()=>{
-						uni.hideLoading()
-					})
 			},
 			async share() {
 				let {result} = await db.collection('uni-id-users').where("'_id' == $cloudEnv_uid").field('my_invite_code').get()
