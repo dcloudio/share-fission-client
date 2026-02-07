@@ -104,13 +104,6 @@
 
 				}
 			}
-		},
-		{
-			"path": "pages/ucenter/invite/invite",
-			"style": {
-				"navigationStyle": "custom",
-				"enablePullDownRefresh": false
-			}
 		}
 		// #endif
 	],
