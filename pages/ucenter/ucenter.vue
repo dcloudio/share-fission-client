@@ -103,15 +103,7 @@
 	import statusBar from "@/uni_modules/uni-nav-bar/components/uni-nav-bar/uni-status-bar";
 	import checkUpdate from '@/uni_modules/uni-upgrade-center-app/utils/check-update';
 	import callCheckVersion from '@/uni_modules/uni-upgrade-center-app/utils/call-check-version';
-	// #ifdef APP
-	import UniShare from '@/uni_modules/uni-share/js_sdk/uni-share.js';
-	const uniShare = new UniShare()
-	// #endif
-	const db = uniCloud.database();
-	import {
-		store,
-		mutations
-	} from '@/uni_modules/uni-id-pages/common/store.js'
+	import {store} from '@/uni_modules/uni-id-pages/common/store.js'
 	export default {
 		components: {
 			statusBar
@@ -198,77 +190,6 @@
 				uni.navigateTo({
 					url: '/pages/ucenter/points-record/points-record'
 				})
-			},
-			async share() {
-				let {result} = await db.collection('uni-id-users').where("'_id' == $cloudEnv_uid").field('my_invite_code').get()
-				let myInviteCode = result.data[0].my_invite_code
-				if(!myInviteCode){
-					return uni.showToast({
-						title: '请检查uni-config-center中uni-id配置，是否已启用 autoSetInviteCode',
-						icon: 'none'
-					});
-				}
-				let {
-					appName,
-					logo,
-					company,
-					slogan
-				} = this.appConfig.about
-				// #ifdef APP
-				uniShare.show({
-					content: {
-						type: 0,
-						href: this.appConfig.h5.url +
-							`/#/pages/ucenter/invite/invite?code=uniInvitationCode:${myInviteCode}`,
-						title: appName,
-						summary: slogan,
-						imageUrl: logo +
-							'?x-oss-process=image/resize,m_fill,h_100,w_100'
-					},
-					menus: [{
-							"img": "/static/app/sharemenu/wechatfriend.png",
-							"text": "微信好友",
-							"share": {
-								"provider": "weixin",
-								"scene": "WXSceneSession"
-							}
-						},
-						{
-							"img": "/static/app/sharemenu/wechatmoments.png",
-							"text": "微信朋友圈",
-							"share": {
-								"provider": "weixin",
-								"scene": "WXSceneTimeline"
-							}
-						},
-						{
-							"img": "/static/app/sharemenu/weibo.png",
-							"text": "微博",
-							"share": {
-								"provider": "sinaweibo"
-							}
-						},
-						{
-							"img": "/static/app/sharemenu/qq.png",
-							"text": "QQ",
-							"share": {
-								"provider": "qq"
-							}
-						},
-						{
-							"img": "/static/app/sharemenu/copyurl.png",
-							"text": "复制",
-							"share": "copyurl"
-						},
-						{
-							"img": "/static/app/sharemenu/more.png",
-							"text": "更多",
-							"share": "shareSystem"
-						}
-					],
-					cancelText: "取消分享",
-				}, e => {})
-				// #endif
 			}
 		}
 	}
