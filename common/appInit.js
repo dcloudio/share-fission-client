@@ -50,34 +50,8 @@ export default async function() {
 			// });
 			if(objectName == "uni-id-co" && (methodName.includes('loginBy') ||  ['login','registerUser'].includes(methodName) )){
 				console.log('执行登录相关云对象');
-				params[0].inviteCode = await new Promise((callBack) => {
-					uni.getClipboardData({
-						success: function(res) {
-							console.log('剪切板内容：'+res.data);
-							if (res.data.slice(0, 18) == 'uniInvitationCode:') {
-								let uniInvitationCode = res.data.slice(18, 38)
-								console.log('当前用户是其他用户推荐下载的,推荐者的code是：' + uniInvitationCode);
-								// uni.showModal({
-								// 	content: '当前用户是其他用户推荐下载的,推荐者的code是：'+uniInvitationCode,
-								// 	showCancel: false
-								// });
-								callBack(uniInvitationCode)
-								//当前用户是其他用户推荐下载的。这里登记他的推荐者id 为当前用户的myInviteCode。判断如果是注册
-							} else {
-								callBack()
-							}
-						},
-						fail(e) {
-							console.log('error--',e);
-							callBack()
-						},
-						complete() {
-							// #ifdef MP-WEIXIN
-							uni.hideToast()
-							// #endif
-						}
-					});
-				})
+				params[0].inviteCode = uni.getStorageSync('sf-invitation-code')
+				console.log('inviteCode', params[0].inviteCode);
 				// console.log(params);
 			}
 			// console.log(params);

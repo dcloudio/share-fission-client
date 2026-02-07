@@ -118,8 +118,8 @@ export default {
 					}
 
 					// 生成邀请链接
-					const baseUrl = this.appConfig.h5?.url || 'https://your-domain.com'
-					this.inviteUrl = `${baseUrl}/#/pages/ucenter/invite/invite?code=uniInvitationCode:${this.myInviteCode}`
+					const baseUrl = this.appConfig.h5?.url
+					this.inviteUrl = `${baseUrl}/#/?uniInvitationCode=${this.myInviteCode}`
 				}
 			} catch (error) {
 				console.error('获取邀请码失败:', error)

@@ -121,7 +121,14 @@
 				return this.riddles.length
 			}
 		},
-		onLoad() {
+		onLoad(options) {
+      		console.log('options', options)
+			// 如果有 uniInvitationCode 就记录到storage中
+			if (options.uniInvitationCode) {
+				uni.setStorageSync('sf-invitation-code', options.uniInvitationCode)
+			}
+
+
 			// 随机打乱谜语顺序，增加趣味性
 			this.shuffleRiddles()
 		},
