@@ -2,8 +2,8 @@
     "name" : "share-fission",
     "appid" : "__UNI__2302A5F",
     "description" : "",
-    "versionName" : "1.0.1",
-    "versionCode" : 26011101,
+    "versionName" : "1.0.2",
+    "versionCode" : 26020701,
     "transformPx" : false,
     "app-plus" : {
         "usingComponents" : true,
@@ -43,7 +43,19 @@
                 "push" : {
                     "unipush" : null
                 },
-                "ad" : {}
+                "ad" : {
+                    "gdt" : {},
+                    "ks" : {},
+                    "sigmob" : {},
+                    "hw" : {},
+                    "bd" : {},
+                    "gm" : {},
+                    "zy" : {},
+                    "bz" : {},
+                    "fl" : {},
+                    "jl" : {},
+                    "yt" : {}
+                }
             }
         }
     },
