@@ -41,5 +41,10 @@ export default {
 	"marketId":{
 		"ios":"",
 		"android":""
+	},
+	//广告配置
+	"ad":{
+		//激励视频广告位ID
+		"rewardedVideo": "1282424243"
 	}
 }

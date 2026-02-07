@@ -253,7 +253,7 @@ class FullScreenVideo extends AdBase {
 /**
  * 通用广告辅助方法
  * @param {Object} options 配置选项
- * @param {Number} options.adpid 广告位ID
+ * @param {Number} options.adpid 广告位ID（可选，默认从配置文件读取）
  * @param {String} options.adType 广告类型（RewardedVideo/FullScreenVideo）
  * @param {Object} options.urlCallback 服务端回调参数（可选）
  * @param {Function} options.onSuccess 广告播放完成的回调
@@ -262,8 +262,12 @@ class FullScreenVideo extends AdBase {
  * @param {String} options.cancelMessage 中途退出的提示文字（可选）
  */
 const showRewardedAd = (options) => {
+  // 从全局配置读取默认广告位ID
+  const appConfig = getApp().globalData.config
+  const defaultAdpid = appConfig?.ad?.rewardedVideo
+
   const {
-    adpid = 1282424243,
+    adpid = defaultAdpid,
     adType = "RewardedVideo",
     urlCallback = null,
     onSuccess,
