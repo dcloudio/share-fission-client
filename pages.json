@@ -124,6 +124,7 @@
 			"pages": [{
 					"path": "userinfo/userinfo",
 					"style": {
+						"navigationStyle": "custom",
 						"navigationBarTitleText": "个人资料"
 					}
 				},
