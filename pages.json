@@ -29,6 +29,7 @@
 		{
 			"path": "pages/ucenter/distribution-invite/distribution-invite",
 			"style": {
+				"navigationStyle": "custom",
 				"navigationBarTitleText": "分销推荐"
 			}
 		},
